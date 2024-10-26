@@ -1,0 +1,25 @@
+const express = require('express');
+const http = require('http');
+require('dotenv').config();
+const cors = require('cors');
+
+const connectDB = require('./config/db');
+const authRoutes = require('./routes/auth');
+
+const PORT = process.env.PORT || 8080;
+const app = express();
+const server = http.createServer(app);
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+    origin: process.env.CLIENT_URL, 
+    credentials: true
+}));
+app.use('/auth',authRoutes);
+
+connectDB();
+
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
