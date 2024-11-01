@@ -10,6 +10,7 @@ const {
     sendPasswordResetSuccessMail
 }= require('../utils/sendingEmail');
 const {generateTokenAndSetCookie} = require('../utils/generateTokenAndSetCookie');
+const { log } = require('console');
 
 // Generate OTP
 const generateOTP = () => {
@@ -61,18 +62,19 @@ const checkRedisConnection = async () => {
 };
 
 // Sign up handler
+// Sign up handler
 const signup = async (req, res) => {
     try {
         // First, check Redis connection
         await checkRedisConnection();
 
-        const { email, password, name, age, height, weight, gender, workoutLevel } = req.body;
+        const { email, password, username, age, height, weight, gender, workoutLevel, name } = req.body; // Added 'name'
 
         // Validate required fields
-        if (!email || !password) {
+        if (!email || !password || !username) { // Added 'name' to validation
             return res.status(400).json({
                 status: 'error',
-                message: 'Email and password are required'
+                message: 'Email, password, and name are required'
             });
         }
 
@@ -96,7 +98,8 @@ const signup = async (req, res) => {
         const userData = {
             email,
             password: hashedPassword,
-            name,
+            username,
+            name, // Include name in user data
             age,
             height,
             weight,
@@ -107,23 +110,12 @@ const signup = async (req, res) => {
         // Store in Redis and verify storage
         await storeOTP(email, otp, userData);
 
-        // Verify storage immediately after storing
-        const key = `verify:${email}`;
-        const storedData = await redis.get(key);
-        console.log('Verification of stored data:', storedData); // For debugging
-
-        if (!storedData) {
-            throw new Error('Failed to store OTP in Redis');
-        }
-
         // Send verification email
         await sendVerificationMail(email, otp);
        
-
         return res.status(200).json({
             status: 'success',
             message: 'Verification code sent to email',
-            token: token
         });
     } catch (error) {
         console.error('Signup error:', error);
@@ -134,6 +126,7 @@ const signup = async (req, res) => {
     }
 };
 
+
 // Verify email handler
 const verifyEmail = async (req, res) => {
     try {
@@ -141,7 +134,7 @@ const verifyEmail = async (req, res) => {
         await checkRedisConnection();
 
         const { email, verificationCode } = req.body;
-        
+        console.log("email: ",email, "verification code: ", verificationCode);
         if (!email || !verificationCode) {
             return res.status(400).json({
                 status: 'error',
@@ -175,8 +168,13 @@ const verifyEmail = async (req, res) => {
         }
 
         const { otp, userData } = parsedData;
-
-        if (verificationCode !== otp) {
+        const otpNumber = Number(otp);
+        console.log("Otp stored in backend: ",otp);
+        console.log(typeof otpNumber, typeof verificationCode);
+        
+        
+        
+        if (verificationCode !== otpNumber) {
             return res.status(400).json({
                 status: 'error',
                 message: 'Invalid verification code'
@@ -208,6 +206,7 @@ const verifyEmail = async (req, res) => {
 
 
 const login = async (req, res) => {
+    
     try {
        
         const { email, password } = req.body;
@@ -223,6 +222,8 @@ const login = async (req, res) => {
         const user = await User.findOne({ email }).select('+password');
         
         if (!user) {
+            
+            
             return res.status(401).json({
                 status: 'error',
                 message: 'Invalid credentials'
@@ -233,6 +234,8 @@ const login = async (req, res) => {
         const isPasswordValid = await bcrypt.compare(password, user.password);
         
         if (!isPasswordValid) {
+            console.log("password is not valid");
+            
             return res.status(401).json({
                 status: 'error',
                 message: 'Invalid credentials'
