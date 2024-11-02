@@ -187,7 +187,7 @@ const verifyEmail = async (req, res) => {
         // Delete verification data from Redis
         await redis.del(key);
         const token = generateTokenAndSetCookie(res, newUser._id);
-        await sendWelcomeMail(newUser.email, newUser.name);
+        await sendWelcomeMail(newUser.email, newUser.username);
         return res.status(201).json({
             status: 'success',
             message: 'Email verified successfully',
@@ -254,7 +254,7 @@ const login = async (req, res) => {
         // Prepare user data for response (exclude sensitive fields)
         const userData = user.toObject();
         delete userData.password;
-        await sendWelcomeMail(user.email, user.name);
+        await sendWelcomeMail(user.email, user.username);
         return res.status(200).json({
             status: 'success',
             message: 'Login successful',

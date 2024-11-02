@@ -7,19 +7,19 @@ const verificationEmailTemplate = (verificationToken) => `
   <title>Verify Your Email</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
+  <div style="background: linear-gradient(to right, #9b59b6, #8e44ad); padding: 20px; text-align: center;">
     <h1 style="color: white; margin: 0;">Verify Your Email</h1>
   </div>
   <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
     <p>Hello,</p>
     <p>Thank you for signing up! Your verification code is:</p>
     <div style="text-align: center; margin: 30px 0;">
-      <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #4CAF50;">${verificationToken}</span>
+      <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #9b59b6;">${verificationToken}</span>
     </div>
     <p>Enter this code on the verification page to complete your registration.</p>
     <p>This code will expire in 15 minutes for security reasons.</p>
     <p>If you didn't create an account with us, please ignore this email.</p>
-    <p>Best regards,<br>Your App Team</p>
+    <p>Best regards,<br>Fitter Health</p>
   </div>
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
     <p>This is an automated message, please do not reply to this email.</p>
@@ -27,6 +27,7 @@ const verificationEmailTemplate = (verificationToken) => `
 </body>
 </html>
 `;
+
 const passwordResetSuccessTemplate = () => `
 <!DOCTYPE html>
 <html lang="en">
@@ -36,14 +37,14 @@ const passwordResetSuccessTemplate = () => `
   <title>Password Reset Successful</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
+  <div style="background: linear-gradient(to right, #9b59b6, #8e44ad); padding: 20px; text-align: center;">
     <h1 style="color: white; margin: 0;">Password Reset Successful</h1>
   </div>
   <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
     <p>Hello,</p>
     <p>We're writing to confirm that your password has been successfully reset.</p>
     <div style="text-align: center; margin: 30px 0;">
-      <div style="background-color: #4CAF50; color: white; width: 50px; height: 50px; line-height: 50px; border-radius: 50%; display: inline-block; font-size: 30px;">
+      <div style="background-color: #9b59b6; color: white; width: 50px; height: 50px; line-height: 50px; border-radius: 50%; display: inline-block; font-size: 30px;">
         ✓
       </div>
     </div>
@@ -55,7 +56,7 @@ const passwordResetSuccessTemplate = () => `
       <li>Avoid using the same password across multiple sites</li>
     </ul>
     <p>Thank you for helping us keep your account secure.</p>
-    <p>Best regards,<br>Your App Team</p>
+    <p>Best regards,<br>Fitter Health</p>
   </div>
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
     <p>This is an automated message, please do not reply to this email.</p>
@@ -73,7 +74,7 @@ const passwordResetRequestTemplate = (resetUrl) => `
   <title>Reset Your Password</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
+  <div style="background: linear-gradient(to right, #9b59b6, #8e44ad); padding: 20px; text-align: center;">
     <h1 style="color: white; margin: 0;">Password Reset</h1>
   </div>
   <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
@@ -81,40 +82,10 @@ const passwordResetRequestTemplate = (resetUrl) => `
     <p>We received a request to reset your password. If you didn't make this request, please ignore this email.</p>
     <p>To reset your password, click the button below:</p>
     <div style="text-align: center; margin: 30px 0;">
-      <a href="${resetUrl}" style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Reset Password</a>
+      <a href="${resetUrl}" style="background-color: #9b59b6; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Reset Password</a>
     </div>
     <p>This link will expire in 1 hour for security reasons.</p>
-    <p>Best regards,<br>Your App Team</p>
-  </div>
-  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
-    <p>This is an automated message, please do not reply to this email.</p>
-  </div>
-</body>
-</html>
-`;
-const welcomeEmailTemplate = (userName) => `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to Our App!</title>
-</head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
-    <h1 style="color: white; margin: 0;">Welcome to Our App!</h1>
-  </div>
-  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
-    <p>Hello ${userName},</p>
-    <p>Thank you for joining us! We're excited to have you on board.</p>
-    <p>At Our App, we strive to provide you with the best experience possible. Here are a few things to get you started:</p>
-    <ul>
-      <li>Explore our features and discover how they can help you.</li>
-      <li>Check out our tutorials to learn more about using the app.</li>
-      <li>Don't hesitate to reach out to our support team if you have any questions.</li>
-    </ul>
-    <p>We hope you enjoy your time with us!</p>
-    <p>Best regards,<br>Your App Team</p>
+    <p>Best regards,<br>Fitter Health</p>
   </div>
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
     <p>This is an automated message, please do not reply to this email.</p>
@@ -123,4 +94,35 @@ const welcomeEmailTemplate = (userName) => `
 </html>
 `;
 
-module.exports = {verificationEmailTemplate, passwordResetSuccessTemplate, passwordResetRequestTemplate, welcomeEmailTemplate};
+const welcomeEmailTemplate = (userName) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Fitter Health!</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(to right, #9b59b6, #8e44ad); padding: 20px; text-align: center;">
+    <h1 style="color: white; margin: 0;">Welcome to Fitter Health!</h1>
+  </div>
+  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+    <p>Hello ${userName},</p>
+    <p>Thank you for joining us! We're excited to have you on board.</p>
+    <p>At Fitter Health, we strive to provide you with the best experience possible. Here are a few things to get you started:</p>
+    <ul>
+      <li>Explore our features and discover how they can help you.</li>
+      <li>Check out our tutorials to learn more about using the app.</li>
+      <li>Don't hesitate to reach out to our support team if you have any questions.</li>
+    </ul>
+    <p>We hope you enjoy your time with us!</p>
+    <p>Best regards,<br>Fitter Health</p>
+  </div>
+  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
+    <p>This is an automated message, please do not reply to this email.</p>
+  </div>
+</body>
+</html>
+`;
+
+module.exports = { verificationEmailTemplate, passwordResetSuccessTemplate, passwordResetRequestTemplate, welcomeEmailTemplate };
