@@ -7,7 +7,7 @@ const dashboard = () => {
   
   return (
     <>
-      <MySidebar/>
+      {/* <MySidebar/> */}
 
     </>
     

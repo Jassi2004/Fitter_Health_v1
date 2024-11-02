@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
@@ -21,7 +22,7 @@ const MySidebar = () => {
   const links = [
     {
       label: "Feed",
-      href: "#",
+      href: "/dashboard",
       icon: (
         <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),

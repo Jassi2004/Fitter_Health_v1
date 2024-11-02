@@ -6,6 +6,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile')
+const userRoutes = require('./routes/user')
 
 const PORT = process.env.PORT || 8080;
 const app = express();
@@ -19,6 +20,7 @@ app.use(cors({
 }));
 app.use('/auth',authRoutes);
 app.use('/profile', profileRoutes);
+app.use('/api/users',userRoutes);
 
 connectDB();
 

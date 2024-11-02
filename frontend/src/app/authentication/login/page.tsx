@@ -29,6 +29,8 @@ const LoginPage = () => {
       const result = await sendLogin({ email, password });
       console.log("Login successful:", result);
       localStorage.setItem("token", result.token);
+      const user = result.data.user._id;
+      localStorage.setItem("userId",user);
       router.push("/dashboard");
     } catch (error: any) {
       if (error.response.status === 401 || error.response?.data.message === "Invalid Credentials") {
