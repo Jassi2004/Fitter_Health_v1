@@ -1,10 +1,9 @@
-// components/authentication/LoginForm.tsx
-
 "use client";
 import { motion } from 'framer-motion';
-import { BackgroundGradient } from '../ui/background-gradient'; // Ensure this component is similar to the one used in OTPForm
-import { TextGenerateEffect } from '../ui/text-generate-effect'; // Ensure this component is similar to the one used in OTPForm
-import { InputComponent } from '../ui/input-component'; // Ensure this component is similar to the one used in OTPForm
+import { BackgroundGradient } from '../ui/background-gradient'; 
+import { TextGenerateEffect } from '../ui/text-generate-effect'; 
+import { InputComponent } from '../ui/input-component'; 
+import Link from 'next/link';
 
 interface LoginFormProps {
     email: string;
@@ -52,9 +51,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ email, password, onChange, onSubm
 
                 <p className="mt-6 text-center text-gray-400">
                     Don't have an account?{' '}
-                    <button className="text-violet-500 hover:text-violet-400" onClick={() => alert('Navigate to signup')}>
+                    <Link href="/authentication/signup" className="text-violet-500 hover:text-violet-400">
                         Sign Up
-                    </button>
+                    </Link>
+                </p>
+
+                <p className="mt-2 text-center text-gray-400">
+                    Forgot your password?{' '}
+                    <Link href="/authentication/forgotPassword" className="text-violet-500 hover:text-violet-400">
+                        Reset Password
+                    </Link>
                 </p>
             </BackgroundGradient>
         </div>

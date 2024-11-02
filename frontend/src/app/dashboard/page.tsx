@@ -1,8 +1,16 @@
-import React from 'react'
+"use client"
+import React from "react";
+import MySidebar from "@/components/sidebar/MySidebar";
+
 
 const dashboard = () => {
+  
   return (
-    <div>dashboard</div>
+    <>
+      <MySidebar/>
+
+    </>
+    
   )
 }
 

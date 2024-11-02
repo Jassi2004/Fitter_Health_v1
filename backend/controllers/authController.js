@@ -192,7 +192,9 @@ const verifyEmail = async (req, res) => {
             status: 'success',
             message: 'Email verified successfully',
             data: {
-                user: newUser
+                user: newUser,
+                token: token
+
             }
         });
     } catch (error) {
@@ -324,7 +326,7 @@ const forgotPassword = async (req, res) => {
         await user.save();
 
         // Send reset password email
-        const resetUrl = `${process.env.CLIENT_URL}/resetPassword/${resetToken}`;
+        const resetUrl = `${process.env.CLIENT_URL}/authentication/resetPassword/${resetToken}`;
         await sendResetPasswordMail(email, resetUrl);
 
         return res.status(200).json({

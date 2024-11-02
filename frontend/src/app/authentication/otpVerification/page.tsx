@@ -2,11 +2,11 @@
 import React, { useState } from 'react';
 import OTPForm from './../../../components/authentication/OtpVerification';
 import sendOTP from '@/services/authentication/sendOtp';
-import { useRouter } from 'next/navigation'; // Updated import
+import { useRouter } from 'next/navigation'; 
 
 const OTPPage = () => {
     const [otp, setOtp] = useState('');
-    const router = useRouter(); // Initialize the router
+    const router = useRouter(); 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setOtp(e.target.value);
@@ -27,7 +27,7 @@ const OTPPage = () => {
             
             console.log('OTP verification successful:', result);
             
-            // Redirect to /dashboard after successful verification
+           
             router.push('/dashboard');
 
         } catch (error) {
