@@ -1,17 +1,18 @@
-"use client"
+"use client";
 import React from "react";
-import MySidebar from "@/components/sidebar/MySidebar";
+import WorkoutCardComponent from "@/components/WorkoutCards/WorkoutCardsComponent";
 
+const Dashboard = () => {
 
-const dashboard = () => {
-  
   return (
     <>
-      {/* <MySidebar/> */}
-
+      <div className="flex flex-col items-center">
+        <div className="w-screen overflow-x-auto overflow-hidden p-4">
+          <WorkoutCardComponent />
+        </div>
+      </div>
     </>
-    
-  )
-}
+  );
+};
 
-export default dashboard;
+export default Dashboard;
