@@ -1,9 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import LoginForm from "@/components/authentication/LoginForm";
 import sendLogin from "@/services/authentication/sendLogin";
-// import FormSubmissionLoader from "@/components/authentication/FormSubmission";
 import Link from "next/link"; 
 
 const LoginPage = () => {
@@ -13,6 +12,14 @@ const LoginPage = () => {
   const [showError, setShowError] = useState(false);
   const [loading, setLoading] = useState(false); 
   const router = useRouter();
+
+  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.push("/dashboard"); // Redirect to dashboard if token exists
+    }
+  }, [router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -30,10 +37,10 @@ const LoginPage = () => {
       console.log("Login successful:", result);
       localStorage.setItem("token", result.token);
       const user = result.data.user._id;
-      localStorage.setItem("userId",user);
+      localStorage.setItem("userId", user);
       router.push("/dashboard");
     } catch (error: any) {
-      if (error.response.status === 401 || error.response?.data.message === "Invalid Credentials") {
+      if (error.response?.status === 401 || error.response?.data.message === "Invalid Credentials") {
         setError("Username and password do not match.");
       } else {
         setError("An unexpected error occurred. Please try again.");
@@ -41,7 +48,7 @@ const LoginPage = () => {
       console.error("Login failed:", error);
       setShowError(true);
     } finally {
-      setLoading(false); // Hide loader when done
+      setLoading(false); 
     }
   };
 
@@ -65,26 +72,21 @@ const LoginPage = () => {
           </div>
         </div>
       )}
-      {/* {loading ? (
-        <FormSubmissionLoader loading={loading} onClose={() => setLoading(false)} /> // Pass loading and onClose
-      ) : ( */}
-        <>
-          <LoginForm
-            email={email}
-            password={password}
-            onChange={handleChange}
-            onSubmit={handleSubmit}
-          />
-          {/* <div className="mt-4 flex justify-between">
-            <Link href="/authentication/forgotPassword" className="text-blue-600 hover:underline">
-              Reset Password
-            </Link>
-            <Link href="/authentication/signup" className="text-blue-600 hover:underline">
-              Sign Up
-            </Link>
-          </div> */}
-        </>
-      {/* )} */}
+      <LoginForm
+        email={email}
+        password={password}
+        onChange={handleChange}
+        onSubmit={handleSubmit}
+      />
+
+      {/* <div className="mt-4 flex justify-between">
+        <Link href="/authentication/forgotPassword" className="text-blue-600 hover:underline">
+          Reset Password
+        </Link>
+        <Link href="/authentication/signup" className="text-blue-600 hover:underline">
+          Sign Up
+        </Link>
+      </div> */}
     </div>
   );
 };

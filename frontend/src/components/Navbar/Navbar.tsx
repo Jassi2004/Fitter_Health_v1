@@ -1,79 +1,86 @@
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation";
 import { FloatingDock } from "@/components/ui/floating-dock";
 import {
-    IconBrandGithub,
-    IconBrandX,
-    IconExchange,
-    IconHome,
-    IconNewSection,
-    IconTerminal2,
+    IconArrowLeft,
+    IconBrandTabler,
+    IconSettings,
+    IconUserBolt,
+    IconMessage,
+    IconApple,
+    IconBarbell,
+    IconSearch,
 } from "@tabler/icons-react";
-import Image from "next/image";
+import { handleLogout } from "@/services/authentication/handleLogout";
 
 const Navbar = () => {
+    const router = useRouter();
+    const onLogoutClick = () => {
+        handleLogout(router);
+    };
     const links = [
         {
-            title: "Home",
+            title: "Feed",
+            href: "/dashboard",
             icon: (
-                <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+                <IconBrandTabler className="text-white h-5 w-5 flex-shrink-0" />
             ),
-            href: "#",
+        },
+        { 
+            title: "Search", 
+            href: "/search", 
+            icon: <IconSearch className="text-white h-5 w-5 flex-shrink-0" /> 
         },
         {
-            title: "Products",
+            title: "Profile",
+            href: "/profile",
             icon: (
-                <IconTerminal2 className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+                <IconUserBolt className="text-white h-5 w-5 flex-shrink-0" />
             ),
-            href: "#",
         },
         {
-            title: "Components",
-            icon: (
-                <IconNewSection className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-            ),
+            title: "Workouts",
             href: "#",
+            icon: (
+                <IconBarbell className="text-white h-5 w-5 flex-shrink-0" />
+            ),
         },
         {
-            title: "Aceternity UI",
-            icon: (
-                <Image
-                    src="https://assets.aceternity.com/logo-dark.png"
-                    width={20}
-                    height={20}
-                    alt="Aceternity Logo"
-                />
-            ),
+            title: "Nutrition",
             href: "#",
+            icon: (
+                <IconApple className="text-white h-5 w-5 flex-shrink-0" />
+            ),
         },
         {
-            title: "Changelog",
-            icon: (
-                <IconExchange className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-            ),
+            title: "Messages",
             href: "#",
+            icon: (
+                <IconMessage className="text-white h-5 w-5 flex-shrink-0" />
+            ),
         },
         {
-            title: "Twitter",
-            icon: (
-                <IconBrandX className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-            ),
+            title: "Settings",
             href: "#",
+            icon: (
+                <IconSettings className="text-white h-5 w-5 flex-shrink-0" />
+            ),
         },
         {
-            title: "GitHub",
-            icon: (
-                <IconBrandGithub className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-            ),
+            title: "Logout",
             href: "#",
+            icon: <IconArrowLeft className="text-white h-5 w-5 flex-shrink-0" />,
+            onClick: onLogoutClick,
         },
     ];
-
+    
     return (
-        <div className="fixed bottom-10 left-1/3 w-auto z-10"> {/* Fixed positioning */}
+        <div className="fixed bottom-10 left-1/3 w-auto z-10">
             <FloatingDock
-                mobileClassName="translate-y-20" // only for demo, remove for production
+                mobileClassName="translate-y-20"
                 items={links}
+                backgroundColor="bg-gray-800" // Dark gray background
             />
         </div>
     );

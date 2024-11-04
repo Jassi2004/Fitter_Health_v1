@@ -1,21 +1,31 @@
 // controllers/userController.js
 const User = require('../models/user');
 
-// Search for users by username or email
+
 const searchUsers = async (req, res) => {
   try {
     const query = req.query.q;
+    const currentUserId = req.userId; 
     const users = await User.find({
       $or: [
         { username: { $regex: query, $options: 'i' } },
         { email: { $regex: query, $options: 'i' } }
       ]
-    }).select('username email'); // Limit fields to return
-    res.status(200).json(users);
+    }).select('username email followers') 
+
+    const usersWithFollowStatus = users.map(user => ({
+      ...user._doc,
+      isFollowing: user.followers.includes(currentUserId) 
+    }));
+    console.log("hello from search for user function");
+    
+
+    res.status(200).json(usersWithFollowStatus);
   } catch (error) {
     res.status(500).json({ message: 'Error searching users', error });
   }
 };
+
 // controllers/userController.js
 const followUser = async (req, res) => {
     try {

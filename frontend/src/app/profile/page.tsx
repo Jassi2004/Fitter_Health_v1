@@ -5,9 +5,9 @@ import axios from 'axios';
 const ProfilePage = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get('http://localhost:8080/profile/getProfile', {
@@ -16,15 +16,19 @@ const ProfilePage = () => {
           },
         });
         setUser(response.data);
-      } catch (error) {
-        console.error('Error fetching user profile:', error);
+      } catch (error : any) {
+        if (error.response) {
+          console.error('Error fetching user profile:', error.response.data); 
+        } else {
+          console.error('Error fetching user profile:', error.message);
+        }
       } finally {
         setLoading(false);
       }
     };
-
+    
     fetchUserProfile();
-  }, [token]);
+  }, []);
 
   if (loading) {
     return (
