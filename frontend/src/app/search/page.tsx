@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useId, useState } from "react";
+import React, { useId, useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { searchUsers } from '@/services/user/searchUser';
@@ -8,7 +8,8 @@ import { followUser } from '@/services/user/followUser';
 import { unfollowUser } from '@/services/user/unfollowUser';
 import { toast } from 'react-toastify';
 import { HoverEffect } from "@/components/ui/card-hover-effect"; // Adjust the import according to your folder structure
-import './page.css'
+import './page.css';
+
 interface User {
   _id: string;
   username: string;
@@ -26,24 +27,34 @@ const UserSearchPage: React.FC = () => {
   const userId = typeof window !== 'undefined' ? localStorage.getItem("userId") : null;
   const currentUserId: string = userId ? userId : '';
 
-  const handleSearch = async (): Promise<void> => {
-    if (!query) return;
-    setLoading(true);
-    try {
-      const result = await searchUsers(query);
-      const updatedUsers = result.map((user: User) => ({
-        ...user,
-        isFollowing: user.followers.includes(currentUserId),
-      }));
+  // Effect to run search when query changes
+  useEffect(() => {
+    const handleSearch = async (): Promise<void> => {
+      if (!query) {
+        setUsers([]); // Clear users if query is empty
+        return;
+      }
+      setLoading(true);
+      try {
+        const result = await searchUsers(query);
+        const updatedUsers = result.map((user: User) => ({
+          ...user,
+          isFollowing: user.followers.includes(currentUserId),
+        }));
+        setUsers(updatedUsers);
+      } catch (error) {
+        console.error('Error searching users:', error);
+        toast.error('Error searching users. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      setUsers(updatedUsers);
-    } catch (error) {
-      console.error('Error searching users:', error);
-      toast.error('Error searching users. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Debounce search function to prevent too many requests
+    const debounceTimeout = setTimeout(handleSearch, 300); // 300 ms delay
+
+    return () => clearTimeout(debounceTimeout); // Cleanup on unmount or when query changes
+  }, [query, currentUserId]);
 
   const handleFollow = async (followId: string): Promise<void> => {
     try {
@@ -93,19 +104,10 @@ const UserSearchPage: React.FC = () => {
             value={query}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setQuery(e.target.value);
-              if (e.target.value === '') {
-                setUsers([]);
-              }
             }}
             placeholder="Search users..."
             className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           />
-         <button
-          onClick={handleSearch}
-          className="ml-2 mt-2 button-with-border"
-        >
-          Search
-        </button>
         </div>
 
         {loading ? (
