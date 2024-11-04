@@ -319,7 +319,8 @@ const forgotPassword = async (req, res) => {
         // Generate reset token and expiry
         const resetToken = crypto.randomBytes(20).toString('hex');
         const resetTokenExpiresAt = Date.now() + (60 * 60 * 1000); // 1 hour
-
+        console.log("reset token in reset controller: " , resetToken);
+        
         // Save reset token to user
         user.resetPasswordToken = resetToken;
         user.resetPasswordExpiresAt = resetTokenExpiresAt;
@@ -344,10 +345,11 @@ const forgotPassword = async (req, res) => {
 
 // Reset password handler
 const resetPassword = async (req, res) => {
-    try {
-        const { token } = req.params;
-        const { password } = req.body;
 
+    try {
+        
+        const { token } = req.query;
+        const { password } = req.body;
         if (!password) {
             return res.status(400).json({
                 status: 'error',
@@ -377,7 +379,8 @@ const resetPassword = async (req, res) => {
 
         // Send success email
         await sendPasswordResetSuccessMail(user.email);
-
+        console.log("password reset successful");
+        
         return res.status(200).json({
             status: 'success',
             message: 'Password has been reset successfully'

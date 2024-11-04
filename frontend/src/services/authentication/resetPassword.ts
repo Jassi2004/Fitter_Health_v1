@@ -6,7 +6,14 @@ interface ResetPasswordParams {
 }
 
 const sendResetPassword = async ({ token, password }: ResetPasswordParams) => {
-  const response = await axios.post(`http://localhost:3000/authentication/resetPassword/${token}`, { password });
+  if (!token) {
+    throw new Error("Token is required");
+  }
+
+  const tokenString = Array.isArray(token) ? token.join(",") : token;
+
+  const response = await axios.post(`http://localhost:8080/auth/resetPassword?token=${encodeURIComponent(tokenString)}`, { password });
+
   return response.data; 
 };
 

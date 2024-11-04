@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import ResetPasswordForm from "@/components/authentication/ResetPassword"; 
 import sendResetPassword from "@/services/authentication/resetPassword"; 
-import FormSubmissionLoader from "@/components/authentication/FormSubmission"; 
+// import FormSubmissionLoader from "@/components/authentication/FormSubmission"; 
 
 // Accept the token as a parameter
 const ResetPasswordPage: React.FC<{ params: { token: string } }> = ({ params }) => {
@@ -33,9 +33,11 @@ const ResetPasswordPage: React.FC<{ params: { token: string } }> = ({ params }) 
 
     try {
       const result = await sendResetPassword({ token, password });
+      console.log(result);
+      
       setSuccess(result.message);
       setPassword(""); // Clear the password field after success
-        router.push('/authentication/login');
+      router.push('/authentication/login');
     } catch (error: any) {
       setError(error.response?.data?.message || "Failed to reset password");
       setShowError(true);
@@ -65,7 +67,7 @@ const ResetPasswordPage: React.FC<{ params: { token: string } }> = ({ params }) 
         </div>
       )}
       {/* {loading ? (
-        <FormSubmissionLoader loading={loading} onClose={() => setLoading(false)} /> // Show loader component if needed
+        <FormSubmissionLoader loading={loading} onClose={() => setLoading(false)} />
       ) : ( */}
         <ResetPasswordForm
           password={password}
