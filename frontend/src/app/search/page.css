@@ -1,0 +1,20 @@
+.button-with-border {
+    background-color: #0f172a;
+    color: white;
+    border: 2px solid #3b82f6;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  
+  .button-with-border:hover {
+    background-color: #3a60aa;
+    border-color: white;
+  }
+  
+  .button-with-border:active {
+    background-color: #1e3a8a;
+    border-color: #1d4ed8;
+  }
+  

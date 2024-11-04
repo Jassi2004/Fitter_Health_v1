@@ -124,25 +124,26 @@ export const CardDescription = ({
 };
 
 const FollowButton = ({
-  isFollowing,
-  followId,
-  handleFollow,
-}: {
-  isFollowing: boolean;
-  followId: string;
-  handleFollow: () => void;
-}) => {
-  return (
-    <button
-      onClick={(e) => {
-        e.preventDefault(); // Prevent any default behavior
-        handleFollow();
-      }}
-      className={`ml-4 px-4 py-2 rounded-lg text-white ${
-        isFollowing ? "bg-red-600" : "bg-blue-600" // Changed to blue background
-      } hover:bg-opacity-75 transition-colors`}
-    >
-      {isFollowing ? "Unfollow" : "Follow"}
-    </button>
-  );
-};
+    isFollowing,
+    followId,
+    handleFollow,
+  }: {
+    isFollowing: boolean;
+    followId: string;
+    handleFollow: () => void;
+  }) => {
+    return (
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          handleFollow();
+        }}
+        className={`ml-4 px-4 py-2 rounded-lg text-white border-2 ${
+          isFollowing ? "bg-gray-800 border-gray-600 hover:bg-gray-700" : "bg-blue-800 border-blue-600 hover:bg-blue-700"
+        } transition-colors`}
+      >
+        {isFollowing ? "Unfollow" : "Follow"}
+      </button>
+    );
+  };
+  

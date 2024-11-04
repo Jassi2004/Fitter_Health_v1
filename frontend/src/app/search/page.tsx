@@ -8,7 +8,7 @@ import { followUser } from '@/services/user/followUser';
 import { unfollowUser } from '@/services/user/unfollowUser';
 import { toast } from 'react-toastify';
 import { HoverEffect } from "@/components/ui/card-hover-effect"; // Adjust the import according to your folder structure
-
+import './page.css'
 interface User {
   _id: string;
   username: string;
@@ -100,12 +100,12 @@ const UserSearchPage: React.FC = () => {
             placeholder="Search users..."
             className="w-full px-4 py-2 rounded-lg border dark:bg-gray-800 text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           />
-          <button
-            onClick={handleSearch}
-            className="ml-2 mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors dark:bg-blue-500 dark:hover:bg-blue-400"
-          >
-            Search
-          </button>
+         <button
+          onClick={handleSearch}
+          className="ml-2 mt-2 button-with-border"
+        >
+          Search
+        </button>
         </div>
 
         {loading ? (
