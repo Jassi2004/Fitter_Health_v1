@@ -1,35 +1,20 @@
 "use client"
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
+import { UserProfile } from '@/services/user/getUserProfile';
 
-const ProfilePage = () => {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+interface Post {
+  _id: string;
+  title: string;
+  description?: string;
+  imageUrl: string;
+}
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const fetchUserProfile = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/profile/getProfile', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setUser(response.data);
-      } catch (error : any) {
-        if (error.response) {
-          console.error('Error fetching user profile:', error.response.data); 
-        } else {
-          console.error('Error fetching user profile:', error.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchUserProfile();
-  }, []);
+interface ProfileTemplateProps {
+  user: UserProfile | null; 
+  loading: boolean;
+}
 
+const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ user, loading }) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -46,7 +31,7 @@ const ProfilePage = () => {
     <div className="container mx-auto p-6">
       <div className="flex flex-col items-center">
         <img
-        //   src={user.avatar || '/default-avatar.png'}
+          src={user.avatar || '/default-avatar.png'}
           alt={user.username}
           className="w-24 h-24 rounded-full border-2 border-gray-300 mb-4"
         />
@@ -63,7 +48,7 @@ const ProfilePage = () => {
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">Posts</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {user.posts.map((post: any) => (
+          {user.posts.map((post: Post) => (  // Specify the type for post
             <div className="card w-full bg-base-100 shadow-xl" key={post._id}>
               <figure>
                 <img src={post.imageUrl} alt={post.title} />
@@ -80,4 +65,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default ProfileTemplate;

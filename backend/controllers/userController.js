@@ -17,7 +17,6 @@ const searchUsers = async (req, res) => {
       ...user._doc,
       isFollowing: user.followers.includes(currentUserId) 
     }));
-    console.log("hello from search for user function");
     
 
     res.status(200).json(usersWithFollowStatus);
@@ -26,7 +25,6 @@ const searchUsers = async (req, res) => {
   }
 };
 
-// controllers/userController.js
 const followUser = async (req, res) => {
     try {
       const { userId, followId } = req.body;
@@ -74,24 +72,31 @@ const followUser = async (req, res) => {
       res.status(500).json({ message: 'Error unfollowing user', error });
     }
   };
-  // controllers/userController.js
-const viewUserProfile = async (req, res) => {
+
+  const viewUserProfile = async (req, res) => {
     try {
       const { userId } = req.params;
+      console.log("Fetching user profile for userId:", userId);
+      
       const user = await User.findById(userId)
-        .select('-password') // Exclude password field for security
+        .select('-password') 
         .populate('followers', 'username')
         .populate('following', 'username')
-        .populate('posts')
-        .populate('workoutHistory');
+        // .populate('posts')
+        // .populate('workoutHistory');
+      
       if (!user) {
+        console.error("User not found with userId:", userId);
         return res.status(404).json({ message: 'User not found' });
       }
+      
       res.status(200).json(user);
     } catch (error) {
+      console.error('Error fetching user profile:', error.message);
       res.status(500).json({ message: 'Error fetching user profile', error });
     }
   };
+  
   
 
   module.exports = {
