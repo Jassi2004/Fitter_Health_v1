@@ -1,7 +1,7 @@
 import axios from "axios";
 
 interface ResetPasswordParams {
-  token: string | string[] | undefined; // Handle string or array in case of multiple tokens
+  token: string | string[] | undefined; 
   password: string;
 }
 

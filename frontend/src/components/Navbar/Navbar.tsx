@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FloatingDock } from "@/components/ui/floating-dock";
 import {
@@ -15,10 +15,19 @@ import {
 import { handleLogout } from "@/services/authentication/handleLogout";
 
 const Navbar = () => {
+    const [userId, setUserId] = useState<string | null>(null);
     const router = useRouter();
+
+    useEffect(() => {
+        
+        const storedUserId = localStorage.getItem("userId");
+        setUserId(storedUserId);
+    }, []);
+
     const onLogoutClick = () => {
         handleLogout(router);
     };
+
     const links = [
         {
             title: "Feed",
@@ -34,7 +43,7 @@ const Navbar = () => {
         },
         {
             title: "Profile",
-            href: "/profile",
+            href: userId ? `/profile/${userId}` : "#",
             icon: (
                 <IconUserBolt className="text-white h-5 w-5 flex-shrink-0" />
             ),

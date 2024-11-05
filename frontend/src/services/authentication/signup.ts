@@ -3,9 +3,9 @@ const sendFormData = async (formData: {
     username: string;
     email: string;
     password: string;
-    age: number;
-    height: number;
-    weight: number;
+    age: number | null;    
+    height: number | null;   
+    weight: number | null;
     gender: string;
     workoutLevel: string;
 }) => {
@@ -24,10 +24,16 @@ const sendFormData = async (formData: {
 
         const data = await response.json();
         console.log('User registered successfully:', data);
+
+        
+        if (data.token) {
+            localStorage.setItem('authToken', data.token);
+        }
+
         return data; 
     } catch (error) {
         console.error('Error during registration:', error);
-        throw error; // Throw error for handling in the calling component
+        throw error; 
     }
 };
 

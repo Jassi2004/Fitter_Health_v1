@@ -6,12 +6,12 @@ import { useRouter } from 'next/navigation';
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
     password: '',
-    age: 0,        
-    height: 0,      
-    weight: 0,      
+    age: null,        
+    height: null,      
+    weight: null,      
     gender: 'Male',
     workoutLevel: 'Beginner',
   });

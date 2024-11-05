@@ -1,9 +1,10 @@
 "use client";
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { BackgroundGradient } from '../ui/background-gradient'; 
 import { TextGenerateEffect } from '../ui/text-generate-effect'; 
 import { InputComponent } from '../ui/input-component'; 
 import Link from 'next/link';
+import { MultiStepLoader } from '@/components/ui/multi-step-loader'; // Adjust the path accordingly
 
 interface LoginFormProps {
     email: string;
@@ -13,15 +14,58 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ email, password, onChange, onSubmit }) => {
+    const [loading, setLoading] = useState(false);
+    const [currentStep, setCurrentStep] = useState(0);
+    const loadingStates = [
+        { text: 'Validating email...' },
+        { text: 'Checking password...' },
+        { text: 'Logging in...' },
+    ];
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setCurrentStep(0); // Reset currentStep to the start
+
+        try {
+            // Validate email (Simulating with a timeout for illustration)
+            setCurrentStep(0);
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate validation delay
+
+            // Check password (Simulating with a timeout for illustration)
+            setCurrentStep(1);
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate checking delay
+
+            // Attempt login (Simulating with a timeout for illustration)
+            setCurrentStep(2);
+            await onSubmit(e); // Call the onSubmit prop for actual login logic
+        } catch (error) {
+            console.error("Login failed", error);
+        } finally {
+            setLoading(false); 
+        }
+    };
+
     return (
-        <div className="flex min-h-screen items-center justify-center bg-black p-4">
-            <BackgroundGradient className="rounded-[22px] p-4 sm:p-10 bg-gray-900 max-w-md w-full">
+        <div className="flex min-h-screen items-center justify-center bg-gray-950 p-4">
+            {/* Removed BackgroundGradient component */}
+            <div className="rounded-[22px] p-4 sm:p-10 bg-gray-900 max-w-md w-full">
                 <div className="mb-8">
                     <TextGenerateEffect words="Welcome Back!" className="text-3xl font-bold text-white mb-2" />
                     <p className="text-gray-400">Please login to your account</p>
                 </div>
 
-                <form onSubmit={onSubmit} className="space-y-6">
+                {loading && (
+                    <MultiStepLoader
+                        loadingStates={loadingStates}
+                        loading={loading}
+                        duration={2000}
+                        loop={false}
+                        currentStep={currentStep} // Pass currentStep to the loader
+                    />
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <InputComponent
                         name="email"
                         label="Email"
@@ -40,12 +84,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ email, password, onChange, onSubm
                     />
 
                     <motion.button
-                        whileHover={{ scale: 1.01 }}
-                        whileTap={{ scale: 0.99 }}
                         className="w-full bg-gradient-to-br from-violet-500 to-purple-500 text-white px-6 py-3 rounded-lg font-medium"
                         type="submit"
+                        disabled={loading} // Disable button while loading
                     >
-                        Login
+                        {loading ? 'Loading...' : 'Login'} {/* Change button text based on loading state */}
                     </motion.button>
                 </form>
 
@@ -62,7 +105,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ email, password, onChange, onSubm
                         Reset Password
                     </Link>
                 </p>
-            </BackgroundGradient>
+            </div>
         </div>
     );
 };

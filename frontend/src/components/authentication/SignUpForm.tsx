@@ -1,41 +1,84 @@
 "use client";
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { BackgroundGradient } from '../ui/background-gradient';
 import { TextGenerateEffect } from '../ui/text-generate-effect';
 import { InputComponent } from '../ui/input-component';
+import { MultiStepLoader } from '@/components/ui/multi-step-loader'; 
 
 interface SignUpFormProps {
   formData: {
-    username: string; // Change 'name' to 'username'
+    username: string; 
     email: string;
     password: string;
-    age: number;
-    height: number;
-    weight: number;
+    age: number | null;  // Allow null
+    height: number | null;  // Allow null
+    weight: number | null;  // Allow null
     gender: string;
     workoutLevel: string;
   };
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (e: React.FormEvent) => Promise<void>; 
 }
 
 const SignUpForm: React.FC<SignUpFormProps> = ({ formData, onChange, onSubmit }) => {
+  const [loading, setLoading] = useState(false);
+  const [loadingStepIndex, setLoadingStepIndex] = useState(0);
+  const loadingSteps = [
+    { text: 'Validating your information...' },
+    { text: 'Sending signup request...' },
+    { text: 'Processing your data...' },
+    { text: 'Completing your registration...' },
+    { text: 'Finalizing account setup...' },
+  ];
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true); 
+    setLoadingStepIndex(0); // Reset the loading step index to the first step
+
+    try {
+      for (const step of loadingSteps) {
+        // Simulate loading step for each part (replace this with your actual logic)
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate delay for each step
+        setLoadingStepIndex((prevIndex) => prevIndex + 1);
+      }
+
+      await onSubmit(e); 
+    } catch (error) {
+      console.error("Sign up failed", error);
+    } finally {
+      setLoading(false); 
+      setLoadingStepIndex(0); // Reset loading step index after completion
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black p-4">
-      <BackgroundGradient className="rounded-[22px] p-4 sm:p-10 bg-gray-900 max-w-md w-full">
+    <div className="flex min-h-screen items-center justify-center bg-gray-950 p-4">
+      <div className="rounded-[22px] p-4 sm:p-10 bg-gray-900 max-w-md w-full">
         <div className="mb-8">
           <TextGenerateEffect words="Create your account" className="text-3xl font-bold text-white mb-2" />
           <p className="text-gray-400">Enter your details to get started</p>
         </div>
 
-        <form onSubmit={onSubmit} className="space-y-6 bg-grey-500">
+        {loading && (
+          <MultiStepLoader
+            loadingStates={loadingSteps}
+            loading={loading}
+            duration={2000} // You can adjust the duration here if necessary
+            loop={false}
+            currentStep={loadingStepIndex} // Add currentStep prop to control the displayed step
+          />
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
           <InputComponent
-            name="username" // Update name prop to 'username'
-            label="Username" // Change label to 'Username'
+            name="username" 
+            label="Username"
             placeholder="Your username"
             type="text"
-            value={formData.username} // Update value prop to match formData.username
+            value={formData.username} 
             onChange={onChange}
+            disabled={loading} 
           />
 
           <InputComponent
@@ -45,6 +88,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ formData, onChange, onSubmit })
             type="email"
             value={formData.email}
             onChange={onChange}
+            disabled={loading} 
           />
 
           <InputComponent
@@ -54,6 +98,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ formData, onChange, onSubmit })
             type="password"
             value={formData.password}
             onChange={onChange}
+            disabled={loading} 
           />
 
           <InputComponent
@@ -61,8 +106,9 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ formData, onChange, onSubmit })
             label="Age"
             placeholder="Your age"
             type="number"
-            value={formData.age}
+            value={formData.age ?? ''}  // Show empty if null
             onChange={onChange}
+            disabled={loading} 
           />
 
           <InputComponent
@@ -70,8 +116,9 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ formData, onChange, onSubmit })
             label="Height (cm)"
             placeholder="Your height in cm"
             type="number"
-            value={formData.height}
+            value={formData.height ?? ''}  // Show empty if null
             onChange={onChange}
+            disabled={loading} 
           />
 
           <InputComponent
@@ -79,8 +126,9 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ formData, onChange, onSubmit })
             label="Weight (kg)"
             placeholder="Your weight in kg"
             type="number"
-            value={formData.weight}
+            value={formData.weight ?? ''}  // Show empty if null
             onChange={onChange}
+            disabled={loading} 
           />
 
           <div>
@@ -90,6 +138,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ formData, onChange, onSubmit })
               value={formData.gender}
               onChange={onChange}
               className="block w-full p-2 bg-gray-800 text-white rounded-lg"
+              disabled={loading} 
             >
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -104,6 +153,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ formData, onChange, onSubmit })
               value={formData.workoutLevel}
               onChange={onChange}
               className="block w-full p-2 bg-gray-800 text-white rounded-lg"
+              disabled={loading} 
             >
               <option value="Beginner">Beginner</option>
               <option value="Intermediate">Intermediate</option>
@@ -116,8 +166,9 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ formData, onChange, onSubmit })
             whileTap={{ scale: 0.99 }}
             className="w-full bg-gradient-to-br from-violet-500 to-purple-500 text-white px-6 py-3 rounded-lg font-medium"
             type="submit"
+            disabled={loading} 
           >
-            Sign up
+            {loading ? 'Loading...' : 'Sign up'}
           </motion.button>
         </form>
 
@@ -127,7 +178,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ formData, onChange, onSubmit })
             Sign in
           </a>
         </p>
-      </BackgroundGradient>
+      </div>
     </div>
   );
 };
