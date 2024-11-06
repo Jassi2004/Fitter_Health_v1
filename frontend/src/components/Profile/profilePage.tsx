@@ -1,10 +1,12 @@
-// ProfileTemplate.tsx
 "use client";
-
-import React from 'react';
-import { UserProfile } from '@/services/user/getUserProfile';
+import React, { useEffect, useState } from 'react';
+import { UserProfile, getUserProfile } from '@/services/user/getUserProfile';
 import { GlowingStarsBackgroundCard } from '@/components/ui/glowing-stars';
 import { CanvasRevealEffect } from '@/components/ui/canvas-reveal-effect';
+import { followUser } from '@/services/user/followUser';
+import { unfollowUser } from '@/services/user/unfollowUser';
+import './profilePage.css'
+// import { updateProfile } from '@/services/user/updateProfile';
 
 interface Post {
   _id: string;
@@ -14,11 +16,53 @@ interface Post {
 }
 
 interface ProfileTemplateProps {
-  user: UserProfile | null; 
+  initialUser: UserProfile | null;
   loading: boolean;
 }
 
-const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ user, loading }) => {
+const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading }) => {
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState<number>(initialUser?.followers.length || 0);
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedUserId = localStorage.getItem('userId');
+    setCurrentUser(storedUserId);
+    if (initialUser) {
+      setUser(initialUser);
+      setIsFollowing(initialUser.followers.includes(storedUserId || ''));
+      setFollowerCount(initialUser.followers.length);
+    }
+    if (user && currentUser) {
+      setIsFollowing(user.followers.includes(currentUser));
+      setFollowerCount(user.followers.length);
+    }
+  }, [user, currentUser, initialUser]);
+
+  const handleFollow = async () => {
+    if (user && currentUser) {
+      await followUser(currentUser, user._id);
+      setIsFollowing(true);
+      setFollowerCount(prevCount => prevCount + 1);
+    }
+  };
+
+  const handleUnfollow = async () => {
+    if (user && currentUser) {
+      await unfollowUser(currentUser, user._id);
+      setIsFollowing(false);
+      setFollowerCount(prevCount => prevCount - 1);
+    }
+  };
+
+  // const handleProfileUpdate = async (updatedData: Partial<UserProfile>) => {
+  //   if (user) {
+  //     const updatedUser = await updateProfile(user._id, updatedData);
+  //     setUser(updatedUser); // Update state with new profile data
+  //   }
+  // };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -32,15 +76,9 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ user, loading }) => {
   }
 
   return (
-    <div className="relative w-full min-h-screen  overflow-hidden">
-      {/* Background stars spanning the entire page */}
-      
-
-      {/* Profile Banner */}
+    <div className="relative w-full min-h-screen overflow-hidden profile-template ">
       <div className="relative flex flex-col items-center justify-center h-40 overflow-hidden z-10">
-        <h1 className="text-4xl font-bold text-center text-white">
-          {user.username}
-        </h1>
+        <h1 className="text-4xl font-bold text-center text-white">{user.username}</h1>
         <CanvasRevealEffect
           animationSpeed={5}
           containerClassName="bg-transparent absolute inset-0 pointer-events-none"
@@ -54,26 +92,48 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ user, loading }) => {
 
       <GlowingStarsBackgroundCard className="absolute inset-0 z-0" />
       <div className="relative z-10 flex flex-col items-center text-white mt-8">
-        <div className="flex justify-between items-center w-full px-48 "> 
+        <div className="flex justify-between items-center w-full px-48 py-12">
           <div className="flex flex-col items-center">
             <img
               src={user.avatar || '/default-avatar.png'}
               alt={user.username}
-              className="w-24 h-24 rounded-full border-2 border-gray-300 mb-4"
+              className="w-36 h-36 rounded-full border-2 border-gray-300 mb-4 flex justify-center items-center"
             />
-            <p className="text-gray-400">{user.bio || 'No bio available.'}</p>
           </div>
-          <div className="flex flex-col items-center">
-          <div className="flex space-x-3">
-            <p className="mt-2 text-gray-300">{user.followers.length} Followers</p>
-            <p className="mt-2 text-gray-300">{user.following.length} Following</p>
+          <div className="flex flex-col items-center px-20">
+            <div className="flex space-x-3 font-bold">
+              <p className="mt-2 text-gray-300">{user.posts.length || '0'} Posts</p>
+              <p className="mt-2 text-gray-300">{followerCount} Followers</p>
+              <p className="mt-2 text-gray-300">{user.following.length} Following</p>
             </div>
-           
+            <p className="mt-2 text-gray-400">{user.bio || 'No bio available.'}</p>
+
             <div className="flex space-x-4 mt-4">
-              <button className="btn btn-primary">Follow</button>
-              <button className="btn">Message</button>
+              {currentUser === user._id ? (
+                <>
+                  <button className="btn btn-primary">Settings</button>
+                  <button
+                    className="btn"
+                    // onClick={() => handleProfileUpdate({ bio: 'Updated bio text', avatar: '/new-avatar.png' })}
+                  >
+                    Edit Profile
+                  </button>
+                </>
+              ) : (
+                <>
+                  {isFollowing ? (
+                    <button className="btn btn-secondary" onClick={handleUnfollow}>
+                      Unfollow
+                    </button>
+                  ) : (
+                    <button className="btn btn-secondary" onClick={handleFollow}>
+                      Follow
+                    </button>
+                  )}
+                  <button className="btn">Message</button>
+                </>
+              )}
             </div>
-            
           </div>
         </div>
 

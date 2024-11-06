@@ -13,6 +13,7 @@ export const unfollowUser = async (userId: string, unfollowId: string) => {
       { userId, unfollowId },
       authHeader()
     );
+    console.log("user unfollowed successfully");
     return response.data;
   };
   
