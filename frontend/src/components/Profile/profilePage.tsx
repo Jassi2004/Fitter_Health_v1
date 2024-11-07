@@ -1,12 +1,12 @@
 "use client";
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { UserProfile, getUserProfile } from '@/services/user/getUserProfile';
 import { GlowingStarsBackgroundCard } from '@/components/ui/glowing-stars';
 import { CanvasRevealEffect } from '@/components/ui/canvas-reveal-effect';
 import { followUser } from '@/services/user/followUser';
 import { unfollowUser } from '@/services/user/unfollowUser';
-import './profilePage.css'
-
+import './profilePage.css';
 
 interface Post {
   _id: string;
@@ -26,6 +26,7 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading 
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState<number>(initialUser?.followers.length || 0);
   const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const storedUserId = localStorage.getItem('userId');
@@ -57,14 +58,6 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading 
     }
   };
 
-
-  // const handleProfileUpdate = async (updatedData: Partial<UserProfile>) => {
-  //   if (user) {
-  //     const updatedUser = await updateProfile(user._id, updatedData);
-  //     setUser(updatedUser); // Update state with new profile data
-  //   }
-  // };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -78,7 +71,7 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading 
   }
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden profile-template ">
+    <div className="relative w-full min-h-screen overflow-hidden profile-template">
       <div className="relative flex flex-col items-center justify-center h-40 overflow-hidden z-10">
         <h1 className="text-4xl font-bold text-center text-white">{user.username}</h1>
         <CanvasRevealEffect
@@ -116,7 +109,7 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading 
                   <button className="btn btn-primary">Settings</button>
                   <button
                     className="btn"
-                  // onClick={() => handleProfileUpdate({ bio: 'Updated bio text', avatar: '/new-avatar.png' })}
+                    onClick={() => router.push('/settings/account')}
                   >
                     Edit Profile
                   </button>
