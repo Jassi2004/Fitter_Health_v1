@@ -12,7 +12,9 @@ export interface UserProfile {
   _id: string;
   username: string;
   bio?: string;
-  avatar?: string;
+  image?: string;
+  dob: string; 
+  gender: string; 
   followers: Array<string>;
   following: Array<string>;
   posts: Array<{

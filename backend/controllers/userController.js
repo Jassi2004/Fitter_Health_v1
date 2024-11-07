@@ -1,4 +1,4 @@
-// controllers/userController.js
+
 const User = require('../models/user');
 
 
@@ -11,7 +11,7 @@ const searchUsers = async (req, res) => {
         { username: { $regex: query, $options: 'i' } },
         { email: { $regex: query, $options: 'i' } }
       ]
-    }).select('username email followers') 
+    }).select('username email followers image bio') 
 
     const usersWithFollowStatus = users.map(user => ({
       ...user._doc,
@@ -29,14 +29,12 @@ const followUser = async (req, res) => {
     try {
       const { userId, followId } = req.body;
   
-      // Add followId to the user's following array if not already followed
       await User.findByIdAndUpdate(
         userId,
         { $addToSet: { following: followId } },
         { new: true }
       );
-  
-      // Add userId to the target user's followers array if not already following
+
       await User.findByIdAndUpdate(
         followId,
         { $addToSet: { followers: userId } },
@@ -53,14 +51,12 @@ const followUser = async (req, res) => {
     try {
       const { userId, unfollowId } = req.body;
   
-      // Remove unfollowId from the user's following array
       await User.findByIdAndUpdate(
         userId,
         { $pull: { following: unfollowId } },
         { new: true }
       );
   
-      // Remove userId from the target user's followers array
       await User.findByIdAndUpdate(
         unfollowId,
         { $pull: { followers: userId } },
@@ -96,7 +92,59 @@ const followUser = async (req, res) => {
       res.status(500).json({ message: 'Error fetching user profile', error });
     }
   };
+
+
+
+  const updateProfileImage = async (req, res) => {
+    const { userId } = req.params;
+    const image = req.file ? req.file.path : null;
   
+    try {
+      const user = await User.findById(userId);
+      if (!user) return res.status(404).json({ message: 'User not found' });
+  
+      if (image) {
+        user.image = image;
+        await user.save();
+      }
+  
+      return res.json({
+        message: 'Profile image updated successfully',
+        image: user.image,
+      });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'Error updating profile image' });
+    }
+  };
+
+  const updateProfileFields = async (req, res) => {
+    const { userId } = req.params;
+    const { bio, gender, dob } = req.body;
+  
+    try {
+      const user = await User.findById(userId);
+      if (!user) return res.status(404).json({ message: 'User not found' });
+
+      if (bio !== undefined) user.bio = bio;
+      if (gender) user.gender = gender;
+      if (dob) user.dob = dob; 
+  
+      await user.save();
+  
+      return res.json({
+        message: 'Profile updated successfully',
+        bio: user.bio,
+        gender: user.gender,
+        dob: user.dob,  
+      });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'Error updating profile details' });
+    }
+  };
+  
+
   
 
   module.exports = {
@@ -104,5 +152,7 @@ const followUser = async (req, res) => {
     followUser,
     unfollowUser,
     viewUserProfile,
+    updateProfileImage,
+    updateProfileFields,
   };
   

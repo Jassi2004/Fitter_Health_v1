@@ -13,6 +13,9 @@ const getUserProfile = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
+        if (user.image) {
+            user.image = `/uploads/${user.image}`;
+        }
 
         res.status(200).json(user);
     } catch (error) {

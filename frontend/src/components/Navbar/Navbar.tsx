@@ -71,7 +71,7 @@ const Navbar = () => {
         },
         {
             title: "Settings",
-            href: "#",
+            href: "/settings",
             icon: (
                 <IconSettings className="text-white h-5 w-5 flex-shrink-0" />
             ),

@@ -1,9 +1,13 @@
-import React from 'react'
+"use client";
+import React from 'react';
+import SettingsTemplate from './../../components/settings/settingsPage';
 
-const settingsPage = () => {
+const SettingsPage = () => {
   return (
-    <div>settingsPage</div>
-  )
-}
+    <>
+      <SettingsTemplate />
+    </>
+  );
+};
 
-export default settingsPage
+export default SettingsPage;

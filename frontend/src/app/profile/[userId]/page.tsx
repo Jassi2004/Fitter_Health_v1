@@ -12,6 +12,8 @@ const ProfilePage: React.FC<{ params: { userId: string } }> = ({ params }) => {
     const fetchProfileData = async () => {
       try {
         const userProfile = await getUserProfile(userId);
+        console.log(userProfile);
+        
         setUser(userProfile);
       } catch (error) {
         console.error('Failed to fetch user profile:', error);

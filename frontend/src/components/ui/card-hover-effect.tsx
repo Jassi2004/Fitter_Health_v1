@@ -15,6 +15,7 @@ export const HoverEffect = ({
     isFollowing: boolean;
     followId: string;
     handleFollow: () => void;
+    imageUrl: string; 
   }[];
   className?: string;
 }) => {
@@ -22,51 +23,55 @@ export const HoverEffect = ({
 
   return (
     <div className={cn("flex flex-col py-10 space-y-4", className)}>
-      {items.map((item, idx) => (
-        <Link
-          href={item?.link}
-          key={item?.link}
-          className="relative group block"
-          onMouseEnter={() => setHoveredIndex(idx)}
-          onMouseLeave={() => setHoveredIndex(null)}
-        >
-          <AnimatePresence>
-            {hoveredIndex === idx && (
-              <motion.span
-                className="absolute inset-0 h-full w-full bg-blue-600/[0.3] block rounded-3xl" // Changed to blue background on hover
-                layoutId="hoverBackground"
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: 1,
-                  transition: { duration: 0.15 },
-                }}
-                exit={{
-                  opacity: 0,
-                  transition: { duration: 0.15, delay: 0.2 },
-                }}
-              />
-            )}
-          </AnimatePresence>
-          <Card>
-            <div className="flex items-center justify-between h-full">
-              <img
-                src="path_to_profile_picture" // Replace with actual profile picture URL
-                alt={item.title}
-                className="h-16 w-16 rounded-full mr-4"
-              />
-              <div className="flex-grow">
-                <CardTitle>{item.title}</CardTitle>
-                <CardDescription>{item.description}</CardDescription>
+      {items.map((item, idx) => {
+        console.log("Image URL:", item.imageUrl);  // Log the imageUrl here
+
+        return (
+          <Link
+            href={item?.link}
+            key={item?.link}
+            className="relative group block"
+            onMouseEnter={() => setHoveredIndex(idx)}
+            onMouseLeave={() => setHoveredIndex(null)}
+          >
+            <AnimatePresence>
+              {hoveredIndex === idx && (
+                <motion.span
+                  className="absolute inset-0 h-full w-full bg-blue-600/[0.3] block rounded-3xl" // Blue background on hover
+                  layoutId="hoverBackground"
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    opacity: 1,
+                    transition: { duration: 0.15 },
+                  }}
+                  exit={{
+                    opacity: 0,
+                    transition: { duration: 0.15, delay: 0.2 },
+                  }}
+                />
+              )}
+            </AnimatePresence>
+            <Card>
+              <div className="flex items-center justify-between h-full">
+                <img
+                  src={item.imageUrl} 
+                  alt={item.title}
+                  className="h-16 w-16 rounded-full mr-4"
+                />
+                <div className="flex-grow">
+                  <CardTitle>{item.title}</CardTitle>
+                  <CardDescription>{item.description}</CardDescription>
+                </div>
+                <FollowButton
+                  isFollowing={item.isFollowing}
+                  followId={item.followId}
+                  handleFollow={item.handleFollow}
+                />
               </div>
-              <FollowButton
-                isFollowing={item.isFollowing}
-                followId={item.followId}
-                handleFollow={item.handleFollow}
-              />
-            </div>
-          </Card>
-        </Link>
-      ))}
+            </Card>
+          </Link>
+        );
+      })}
     </div>
   );
 };
@@ -138,12 +143,9 @@ const FollowButton = ({
           e.preventDefault();
           handleFollow();
         }}
-        className={`ml-4 px-4 py-2 rounded-lg text-white border-2 ${
-          isFollowing ? "bg-gray-800 border-gray-600 hover:bg-gray-700" : "bg-blue-800 border-blue-600 hover:bg-blue-700"
-        } transition-colors`}
+        className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-xl"
       >
         {isFollowing ? "Unfollow" : "Follow"}
       </button>
     );
-  };
-  
+};

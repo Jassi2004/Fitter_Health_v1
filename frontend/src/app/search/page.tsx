@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useId, useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -7,7 +6,7 @@ import { searchUsers } from '@/services/user/searchUser';
 import { followUser } from '@/services/user/followUser';
 import { unfollowUser } from '@/services/user/unfollowUser';
 import { toast } from 'react-toastify';
-import { HoverEffect } from "@/components/ui/card-hover-effect"; // Adjust the import according to your folder structure
+import { HoverEffect } from "@/components/ui/card-hover-effect"; 
 import './page.css';
 
 interface User {
@@ -16,6 +15,7 @@ interface User {
   email: string;
   isFollowing: boolean;
   followers: string[];
+  image: string; 
 }
 
 const UserSearchPage: React.FC = () => {
@@ -27,11 +27,10 @@ const UserSearchPage: React.FC = () => {
   const userId = typeof window !== 'undefined' ? localStorage.getItem("userId") : null;
   const currentUserId: string = userId ? userId : '';
 
-  // Effect to run search when query changes
   useEffect(() => {
     const handleSearch = async (): Promise<void> => {
       if (!query) {
-        setUsers([]); // Clear users if query is empty
+        setUsers([]);
         return;
       }
       setLoading(true);
@@ -93,6 +92,7 @@ const UserSearchPage: React.FC = () => {
     isFollowing: user.isFollowing,
     followId: user._id,
     handleFollow: user.isFollowing ? () => handleUnfollow(user._id) : () => handleFollow(user._id),
+    imageUrl: `http://localhost:8080/${user.image}`, 
   }));
 
   return (

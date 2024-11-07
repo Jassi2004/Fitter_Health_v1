@@ -97,7 +97,7 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading 
         <div className="flex justify-between items-center w-full px-48 py-12">
           <div className="flex flex-col items-center">
             <img
-              src={user.avatar || '/default-avatar.png'}
+              src={`http://localhost:8080/${user.image}`}
               alt={user.username}
               className="w-36 h-36 rounded-full border-2 border-gray-300 mb-4 flex justify-center items-center"
             />
@@ -116,7 +116,7 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading 
                   <button className="btn btn-primary">Settings</button>
                   <button
                     className="btn"
-                    // onClick={() => handleProfileUpdate({ bio: 'Updated bio text', avatar: '/new-avatar.png' })}
+                  // onClick={() => handleProfileUpdate({ bio: 'Updated bio text', avatar: '/new-avatar.png' })}
                   >
                     Edit Profile
                   </button>
