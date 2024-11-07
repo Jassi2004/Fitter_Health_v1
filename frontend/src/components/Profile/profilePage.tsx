@@ -6,7 +6,7 @@ import { CanvasRevealEffect } from '@/components/ui/canvas-reveal-effect';
 import { followUser } from '@/services/user/followUser';
 import { unfollowUser } from '@/services/user/unfollowUser';
 import './profilePage.css'
-// import { updateProfile } from '@/services/user/updateProfile';
+
 
 interface Post {
   _id: string;
@@ -22,6 +22,7 @@ interface ProfileTemplateProps {
 
 const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState<number>(initialUser?.followers.length || 0);
   const [currentUser, setCurrentUser] = useState<string | null>(null);
@@ -55,6 +56,7 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading 
       setFollowerCount(prevCount => prevCount - 1);
     }
   };
+
 
   // const handleProfileUpdate = async (updatedData: Partial<UserProfile>) => {
   //   if (user) {
