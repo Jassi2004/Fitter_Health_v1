@@ -7,7 +7,10 @@ const authHeader = () => ({
     Authorization: `Bearer ${localStorage.getItem('token')}`,
   },
 });
-
+export interface Follower {
+  _id: string;
+  username: string;
+}
 export interface UserProfile {
   _id: string;
   username: string;
@@ -15,8 +18,8 @@ export interface UserProfile {
   image?: string;
   dob: string; 
   gender: string; 
-  followers: Array<string>;
-  following: Array<string>;
+  followers: Follower[]; 
+  following: Follower[]; 
   posts: Array<{
     _id: string;
     title: string;

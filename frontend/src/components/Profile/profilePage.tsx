@@ -37,13 +37,11 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
 
     if (initialUser) {
       setUser(initialUser);
-      setIsFollowing(initialUser.followers.includes(storedUserId || ''));
+      setIsFollowing(initialUser.followers.some(follower => follower._id === storedUserId));
       setFollowerCount(initialUser.followers.length);
-      
+
       
     }
-    
-    
   }, [initialUser]);
 
   const handleFollow = async () => {
@@ -133,11 +131,10 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
               alt={user.username}
               className="w-36 h-36 rounded-full border-2 border-gray-300 object-cover"
             />
+            <p className="text-gray-200 mt-4 text-m">{user.username}</p>
           </div>
 
-    
           <div className="flex flex-col items-center md:items-start space-y-3 md:px-16">
-      
             <div className="flex space-x-6 font-bold">
               <div className="text-center">
                 <p className="text-lg">{posts.length}</p>
@@ -161,12 +158,12 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
               {currentUser === user._id ? (
                 <>
                   <button className="btn btn-primary">Settings</button>
-                  <button
+                  {/* <button
                     className="btn"
                     onClick={() => router.push('/settings/account')}
                   >
                     Edit Profile
-                  </button>
+                  </button> */}
                   <button
                     className="btn btn-secondary"
                     onClick={() => router.push('/post/create-post')}
@@ -186,7 +183,6 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
                     </button>
                   )}
                   <button className="btn">
-                    <MessageCircle size={20} />
                     Message
                   </button>
                 </>
@@ -196,40 +192,46 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
         </div>
 
         {/* Posts Section */}
-        <div className="mt-6 mx-2 w-full m-4 overflow-hidden">
-          <h2 className="text-xl m-4 font-semibold mb-3">Posts</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {posts.map((post) => (
-              <div
-                className="card w-full bg-base-100 shadow-xl rounded-lg overflow-hidden border-2 border-gray-700"
-                key={post._id}
-              >
-                <div className="flex flex-col items-left bg-gray-800 p-4">
-                  <h3 className="text-white text-lg font-bold mb-2">{user.username}</h3>
-                  <figure className="relative w-full h-48">
-                    <img
-                      src={`${API_BASE_URL}${post.images[0]}` || 'default-image-url.jpg'}
-                      alt="Post"
-                      className="object-cover w-full h-full"
-                    />
-                  </figure>
-                </div>
-                <div className="card-body p-4 flex flex-col justify-between h-28">
-                  <p className="text-sm text-gray-500 line-clamp-3">{post.content || 'No content available.'}</p>
-                  <div className="flex justify-between mt-auto text-sm text-gray-400">
-                    <div className="flex items-center">
-                      <Heart size={16} />
-                      <span className="ml-2">{post.likes || 0}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <MessageCircle size={16} />
-                      <span className="ml-2">{post.comments || 0}</span>
+        <div className="mt-6 p-4 w-full overflow-hidden">
+          <h2 className="text-2xl text-gray-300 m-2 font-semibold mb-3">Posts</h2>
+          {isFollowing ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {posts.map((post) => (
+                <div
+                  className="card w-full bg-base-100 shadow-xl rounded-lg overflow-hidden border-2 border-gray-700"
+                  key={post._id}
+                >
+                  <div className="flex flex-col items-left bg-gray-800 p-4">
+                    <h3 className="text-white text-lg font-bold mb-2">{user.username}</h3>
+                    <figure className="relative w-full h-48">
+                      <img
+                        src={`${API_BASE_URL}${post.images[0]}` || 'default-image-url.jpg'}
+                        alt="Post"
+                        className="object-cover w-full h-full"
+                      />
+                    </figure>
+                  </div>
+                  <div className="card-body p-4 flex flex-col justify-between h-28">
+                    <p className="text-sm text-gray-500 line-clamp-3">{post.content || 'No content available.'}</p>
+                    <div className="flex justify-between mt-auto text-sm text-gray-400">
+                      <div className="flex items-center">
+                        <Heart size={16} />
+                        <span className="ml-2">{post.likes || 0}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <MessageCircle size={16} />
+                        <span className="ml-2">{post.comments || 0}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-gray-400 mt-8">
+              <p>This account is private. Follow to see posts.</p>
+            </div>
+          )}
         </div>
 
       </div>
