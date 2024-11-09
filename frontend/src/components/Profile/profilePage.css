@@ -14,6 +14,8 @@
     padding: 10px 20px;
     border-radius: 4px;
     cursor: pointer;
+    border-radius: 5px;
+    height: 2.5rem;
   }
   
   .btn::before {
@@ -40,3 +42,13 @@
       transform: translateX(100%);
     }
   }
+  /* Shimmer Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -100%;
+  }
+  100% {
+    background-position: 100%;
+  }
+}
+

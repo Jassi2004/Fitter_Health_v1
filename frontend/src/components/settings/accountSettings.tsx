@@ -96,8 +96,8 @@ const AccountSettings = () => {
   };
 
   return (
-    <div className="bg-gray-950 text-white min-h-screen flex items-center justify-center p-6 w-screen ">
-      <div className="w-full bg-gray-900 p-6 px-32 rounded-lg shadow-lg flex flex-col">
+    <div className="bg-gray-950 text-white min-h-screen flex items-center justify-center p-2 w-screen ">
+      <div className="w-full bg-gray-950 border-2 border-solid border-gray-800 p-6 px-32 rounded-lg shadow-lg flex flex-col">
         <h2 className="text-2xl font-semibold mb-8 text-center">Account Settings</h2>
         
         {/* Image Section */}

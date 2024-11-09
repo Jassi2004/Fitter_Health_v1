@@ -1,60 +1,94 @@
-"use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { UserProfile, getUserProfile } from '@/services/user/getUserProfile';
+import { UserProfile } from '@/services/user/getUserProfile';
 import { GlowingStarsBackgroundCard } from '@/components/ui/glowing-stars';
 import { CanvasRevealEffect } from '@/components/ui/canvas-reveal-effect';
-import { followUser } from '@/services/user/followUser';
-import { unfollowUser } from '@/services/user/unfollowUser';
-import './profilePage.css';
+import { Heart, MessageCircle } from 'lucide-react';
+import './profilePage.css'
 
 interface Post {
   _id: string;
-  title: string;
-  description?: string;
-  imageUrl: string;
+  author: string;
+  content: string;
+  images: string[];
+  videos: string[];
+  likes?: number;
+  comments?: number;
 }
 
 interface ProfileTemplateProps {
   initialUser: UserProfile | null;
   loading: boolean;
+  posts: Post[];
 }
 
-const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading }) => {
+const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading, posts }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState<number>(initialUser?.followers.length || 0);
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const router = useRouter();
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   useEffect(() => {
     const storedUserId = localStorage.getItem('userId');
     setCurrentUser(storedUserId);
+
     if (initialUser) {
       setUser(initialUser);
       setIsFollowing(initialUser.followers.includes(storedUserId || ''));
       setFollowerCount(initialUser.followers.length);
+      
+      
     }
-    if (user && currentUser) {
-      setIsFollowing(user.followers.includes(currentUser));
-      setFollowerCount(user.followers.length);
-    }
-  }, [user, currentUser, initialUser]);
+    
+    
+  }, [initialUser]);
 
   const handleFollow = async () => {
-    if (user && currentUser) {
-      await followUser(currentUser, user._id);
-      setIsFollowing(true);
-      setFollowerCount(prevCount => prevCount + 1);
+    if (!user || !currentUser) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/users/follow`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          followerId: currentUser,
+          followingId: user._id,
+        }),
+      });
+
+      if (response.ok) {
+        setIsFollowing(true);
+        setFollowerCount(prev => prev + 1);
+      }
+    } catch (error) {
+      console.error('Failed to follow user:', error);
     }
   };
 
   const handleUnfollow = async () => {
-    if (user && currentUser) {
-      await unfollowUser(currentUser, user._id);
-      setIsFollowing(false);
-      setFollowerCount(prevCount => prevCount - 1);
+    if (!user || !currentUser) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/users/unfollow`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          followerId: currentUser,
+          followingId: user._id,
+        }),
+      });
+
+      if (response.ok) {
+        setIsFollowing(false);
+        setFollowerCount(prev => prev - 1);
+      }
+    } catch (error) {
+      console.error('Failed to unfollow user:', error);
     }
   };
 
@@ -71,9 +105,10 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading 
   }
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden profile-template">
-      <div className="relative flex flex-col items-center justify-center h-40 overflow-hidden z-10">
-        <h1 className="text-4xl font-bold text-center text-white">{user.username}</h1>
+    <div className="relative w-full min-h-screen overflow-hidden profile-template bg-black">
+      {/* Banner Section */}
+      <div className="relative flex flex-col items-center justify-center h-32 overflow-hidden z-10">
+        <h1 className="text-3xl font-bold text-center text-white">{user.username}</h1>
         <CanvasRevealEffect
           animationSpeed={5}
           containerClassName="bg-transparent absolute inset-0 pointer-events-none"
@@ -85,24 +120,43 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading 
         />
       </div>
 
-      <GlowingStarsBackgroundCard className="absolute inset-0 z-0" />
-      <div className="relative z-10 flex flex-col items-center text-white mt-8">
-        <div className="flex justify-between items-center w-full px-48 py-12">
-          <div className="flex flex-col items-center">
+      <GlowingStarsBackgroundCard className="absolute inset-0 z-0 overflow-hidden" />
+
+      {/* Profile Content */}
+      <div className="relative z-10 flex flex-col items-center text-white mt-4 overflow-hidden">
+        {/* Profile Info Section */}
+        <div className="flex flex-col md:flex-row justify-between items-center w-full px-4 md:px-32 py-8 max-w-7xl mx-auto">
+          {/* Profile Image */}
+          <div className="flex flex-col items-center mb-6 md:mb-0">
             <img
-              src={`http://localhost:8080/${user.image}`}
+              src={`${API_BASE_URL}/${user.image}`}
               alt={user.username}
-              className="w-36 h-36 rounded-full border-2 border-gray-300 mb-4 flex justify-center items-center"
+              className="w-36 h-36 rounded-full border-2 border-gray-300 object-cover"
             />
           </div>
-          <div className="flex flex-col items-center px-20">
-            <div className="flex space-x-3 font-bold">
-              <p className="mt-2 text-gray-300">{user.posts.length || '0'} Posts</p>
-              <p className="mt-2 text-gray-300">{followerCount} Followers</p>
-              <p className="mt-2 text-gray-300">{user.following.length} Following</p>
-            </div>
-            <p className="mt-2 text-gray-400">{user.bio || 'No bio available.'}</p>
 
+    
+          <div className="flex flex-col items-center md:items-start space-y-3 md:px-16">
+      
+            <div className="flex space-x-6 font-bold">
+              <div className="text-center">
+                <p className="text-lg">{posts.length}</p>
+                <p className="text-gray-400 text-sm">Posts</p>
+              </div>
+              <div className="text-center">
+                <p className="text-lg">{followerCount}</p>
+                <p className="text-gray-400 text-sm">Followers</p>
+              </div>
+              <div className="text-center">
+                <p className="text-lg">{user.following.length}</p>
+                <p className="text-gray-400 text-sm">Following</p>
+              </div>
+            </div>
+
+            {/* Bio */}
+            <p className="text-center md:text-left text-gray-300">{user.bio || 'No bio available.'}</p>
+
+            {/* Action Buttons */}
             <div className="flex space-x-4 mt-4">
               {currentUser === user._id ? (
                 <>
@@ -112,6 +166,12 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading 
                     onClick={() => router.push('/settings/account')}
                   >
                     Edit Profile
+                  </button>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => router.push('/post/create-post')}
+                  >
+                    Create Post
                   </button>
                 </>
               ) : (
@@ -125,29 +185,53 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading 
                       Follow
                     </button>
                   )}
-                  <button className="btn">Message</button>
+                  <button className="btn">
+                    <MessageCircle size={20} />
+                    Message
+                  </button>
                 </>
               )}
             </div>
           </div>
         </div>
 
-        <div className="mt-8 w-full">
-          <h2 className="text-xl font-semibold mb-4">Posts</h2>
+        {/* Posts Section */}
+        <div className="mt-6 mx-2 w-full m-4 overflow-hidden">
+          <h2 className="text-xl m-4 font-semibold mb-3">Posts</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {user.posts.map((post: Post) => (
-              <div className="card w-full bg-base-100 shadow-xl" key={post._id}>
-                <figure>
-                  <img src={post.imageUrl} alt={post.title} />
-                </figure>
-                <div className="card-body">
-                  <h2 className="card-title">{post.title}</h2>
-                  <p>{post.description || 'No description available.'}</p>
+            {posts.map((post) => (
+              <div
+                className="card w-full bg-base-100 shadow-xl rounded-lg overflow-hidden border-2 border-gray-700"
+                key={post._id}
+              >
+                <div className="flex flex-col items-left bg-gray-800 p-4">
+                  <h3 className="text-white text-lg font-bold mb-2">{user.username}</h3>
+                  <figure className="relative w-full h-48">
+                    <img
+                      src={`${API_BASE_URL}${post.images[0]}` || 'default-image-url.jpg'}
+                      alt="Post"
+                      className="object-cover w-full h-full"
+                    />
+                  </figure>
+                </div>
+                <div className="card-body p-4 flex flex-col justify-between h-28">
+                  <p className="text-sm text-gray-500 line-clamp-3">{post.content || 'No content available.'}</p>
+                  <div className="flex justify-between mt-auto text-sm text-gray-400">
+                    <div className="flex items-center">
+                      <Heart size={16} />
+                      <span className="ml-2">{post.likes || 0}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <MessageCircle size={16} />
+                      <span className="ml-2">{post.comments || 0}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
+
       </div>
     </div>
   );

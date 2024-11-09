@@ -6,8 +6,9 @@ const path = require('path')
 
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
-const profileRoutes = require('./routes/profile')
-const userRoutes = require('./routes/user')
+const profileRoutes = require('./routes/profile');
+const userRoutes = require('./routes/user');
+const postRoutes = require('./routes/posts');
 
 const PORT = process.env.PORT || 8080;
 const app = express();
@@ -24,7 +25,9 @@ app.use(cors({
 app.use('/auth',authRoutes);
 app.use('/profile', profileRoutes);
 app.use('/api/users',userRoutes);
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/posts',postRoutes);
 
 connectDB();
 
