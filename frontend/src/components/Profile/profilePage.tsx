@@ -157,7 +157,8 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
             <div className="flex space-x-4 mt-4">
               {currentUser === user._id ? (
                 <>
-                  <button className="btn btn-primary">Settings</button>
+                  <button className="btn btn-primary"
+                  onClick={() => router.push('/settings')}>Settings</button>
                   {/* <button
                     className="btn"
                     onClick={() => router.push('/settings/account')}

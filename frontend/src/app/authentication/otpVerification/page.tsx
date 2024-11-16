@@ -26,7 +26,8 @@ const OTPPage = () => {
             const result = await sendOTP(otpNumber); 
             
             console.log('OTP verification successful:', result);
-            
+            localStorage.setItem('token', result.data.token);
+            localStorage.setItem('userId', result.data.userId);
            
             router.push('/dashboard');
 
