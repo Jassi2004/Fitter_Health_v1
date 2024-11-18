@@ -1,6 +1,6 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
-const config = {
+const config: Config = {
   darkMode: ["class"],
   content: [
     './pages/**/*.{ts,tsx}',
@@ -8,7 +8,6 @@ const config = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
-  prefix: "",
   theme: {
     container: {
       center: true,
@@ -67,13 +66,13 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        "shimmer": {
+        shimmer: {
           from: {
             backgroundPosition: "0 0",
           },
           to: {
             backgroundPosition: "-200% 0",
-          }, // Added closing brace here
+          },
         },
       },
       animation: {
@@ -84,6 +83,6 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+};
 
-export default config
+export default config;
