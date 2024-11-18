@@ -84,12 +84,18 @@ const UserSchema = mongoose.Schema(
       default: '',
     },
     image: {
-      type: String, 
+      type: String,
       default: '',
     },
-    dob: { 
-        type: Date,
-      }
+    dob: {
+      type: Date,
+    },
+    caloriesHistory: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'CaloriesBurned',
+      },
+    ],
   }
 );
 
