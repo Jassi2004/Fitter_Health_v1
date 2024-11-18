@@ -32,6 +32,7 @@ const SignupPage = () => {
     console.log(formData);
     localStorage.setItem('email', formData.email);
     
+    
     try {
       const response = await sendFormData(formData); 
       if (response && response.status == "success") { 
