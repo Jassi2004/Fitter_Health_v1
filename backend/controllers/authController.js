@@ -8,8 +8,8 @@ const {
     sendWelcomeMail,
     sendResetPasswordMail,
     sendPasswordResetSuccessMail
-}= require('../utils/sendingEmail');
-const {generateTokenAndSetCookie} = require('../utils/generateTokenAndSetCookie');
+} = require('../utils/sendingEmail');
+const { generateTokenAndSetCookie } = require('../utils/generateTokenAndSetCookie');
 const { log } = require('console');
 
 // Generate OTP
@@ -25,18 +25,18 @@ const storeOTP = async (email, otp, userData) => {
             otp,
             userData
         });
-        
+
         // Explicitly wait for Redis set operation
         const result = await redis.set(key, data, {
             EX: 600 // 10 minutes expiration
         });
-        
+
         // Verify storage
         const storedData = await redis.get(key);
         if (!storedData) {
             throw new Error('Failed to verify Redis storage');
         }
-        
+
         console.log('OTP stored successfully for:', email);
         console.log('Redis SET result:', result);
         return true;
@@ -112,7 +112,7 @@ const signup = async (req, res) => {
 
         // Send verification email
         await sendVerificationMail(email, otp);
-       
+
         return res.status(200).json({
             status: 'success',
             message: 'Verification code sent to email',
@@ -134,7 +134,7 @@ const verifyEmail = async (req, res) => {
         await checkRedisConnection();
 
         const { email, verificationCode } = req.body;
-        console.log("email: ",email, "verification code: ", verificationCode);
+        console.log("email: ", email, "verification code: ", verificationCode);
         if (!email || !verificationCode) {
             return res.status(400).json({
                 status: 'error',
@@ -169,11 +169,11 @@ const verifyEmail = async (req, res) => {
 
         const { otp, userData } = parsedData;
         const otpNumber = Number(otp);
-        console.log("Otp stored in backend: ",otp);
+        console.log("Otp stored in backend: ", otp);
         console.log(typeof otpNumber, typeof verificationCode);
-        
-        
-        
+
+
+
         if (verificationCode !== otpNumber) {
             return res.status(400).json({
                 status: 'error',
@@ -208,11 +208,11 @@ const verifyEmail = async (req, res) => {
 
 
 const login = async (req, res) => {
-    
+
     try {
-       
+
         const { email, password } = req.body;
-        
+
         if (!email || !password) {
             return res.status(400).json({
                 status: 'error',
@@ -220,12 +220,12 @@ const login = async (req, res) => {
             });
         }
 
-       
+
         const user = await User.findOne({ email }).select('+password');
-        
+
         if (!user) {
-            
-            
+
+
             return res.status(401).json({
                 status: 'error',
                 message: 'Invalid credentials'
@@ -234,10 +234,10 @@ const login = async (req, res) => {
 
         // Verify password
         const isPasswordValid = await bcrypt.compare(password, user.password);
-        
+
         if (!isPasswordValid) {
             console.log("password is not valid");
-            
+
             return res.status(401).json({
                 status: 'error',
                 message: 'Invalid credentials'
@@ -319,8 +319,8 @@ const forgotPassword = async (req, res) => {
         // Generate reset token and expiry
         const resetToken = crypto.randomBytes(20).toString('hex');
         const resetTokenExpiresAt = Date.now() + (60 * 60 * 1000); // 1 hour
-        console.log("reset token in reset controller: " , resetToken);
-        
+        console.log("reset token in reset controller: ", resetToken);
+
         // Save reset token to user
         user.resetPasswordToken = resetToken;
         user.resetPasswordExpiresAt = resetTokenExpiresAt;
@@ -347,7 +347,7 @@ const forgotPassword = async (req, res) => {
 const resetPassword = async (req, res) => {
 
     try {
-        
+
         const { token } = req.query;
         const { password } = req.body;
         if (!password) {
@@ -380,7 +380,7 @@ const resetPassword = async (req, res) => {
         // Send success email
         await sendPasswordResetSuccessMail(user.email);
         console.log("password reset successful");
-        
+
         return res.status(200).json({
             status: 'success',
             message: 'Password has been reset successfully'

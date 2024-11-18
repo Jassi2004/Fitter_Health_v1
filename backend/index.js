@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
 const userRoutes = require('./routes/user');
 const postRoutes = require('./routes/posts');
+const caloriesRoutes = require('./routes/calories');
 
 const PORT = process.env.PORT || 8080;
 const app = express();
@@ -17,17 +18,20 @@ const server = http.createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: process.env.CLIENT_URL, 
+    origin: process.env.CLIENT_URL,
     credentials: true
 }));
 
 
-app.use('/auth',authRoutes);
+app.use('/auth', authRoutes);
 app.use('/profile', profileRoutes);
-app.use('/api/users',userRoutes);
+app.use('/api/users', userRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/posts',postRoutes);
+app.use('/posts', postRoutes);
+
+// Other routes
+app.use('/calories', caloriesRoutes);
 
 connectDB();
 
