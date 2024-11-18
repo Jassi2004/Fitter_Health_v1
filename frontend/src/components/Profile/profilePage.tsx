@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { startConversation } from '@/services/message/startConversation';
 import { UserProfile } from '@/services/user/getUserProfile';
 import { GlowingStarsBackgroundCard } from '@/components/ui/glowing-stars';
 import { CanvasRevealEffect } from '@/components/ui/canvas-reveal-effect';
@@ -89,7 +90,15 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
       console.error('Failed to unfollow user:', error);
     }
   };
-
+  const onMessageClick = async () => {
+    if (!user || !currentUser) return;
+    try {
+      const { conversationId } = await startConversation(currentUser, user._id);
+      router.push(`/messages/conversation/${conversationId}?recipientId=${user._id}`);
+    } catch (error) {
+      console.error('Error in starting conversation:', error);
+    }
+  };
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -183,9 +192,7 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
                       Follow
                     </button>
                   )}
-                  <button className="btn">
-                    Message
-                  </button>
+                  <button className="btn" onClick={onMessageClick}>Message</button>
                 </>
               )}
             </div>
