@@ -30,11 +30,10 @@
     "react-dropzone": "^14.3.5",
     "react-element-to-jsx-string": "^15.0.0",
     "react-toastify": "^10.0.6",
-<<<<<<< HEAD
     "simplex-noise": "^4.0.3",
-=======
+
     "socket.io-client": "^4.8.1",
->>>>>>> b69103c (message functionality)
+
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.170.0"

@@ -2,13 +2,17 @@
 const Post = require('../models/posts');
 const fs = require('fs');
 const path = require('path');
+const User = require('../models/user');
 
 const createPost = async (req, res) => {
     const { content, author } = req.body;
-  
+    // const user = User.findById(author);
+    // console.log(user.username);
+    
     // Store only the relative path
     const images = req.files['images'] ? req.files['images'].map(file => file.path.replace(/\\/g, '/').replace('uploads/', '')) : [];
     const videos = req.files['videos'] ? req.files['videos'].map(file => file.path.replace(/\\/g, '/').replace('uploads/', '')) : [];
+
   
     try {
       const newPost = new Post({
@@ -89,5 +93,49 @@ const deletePost = async (req, res) => {
       return res.status(500).json({ message: 'Server error, please try again later.' });
     }
   };
+  const likePost = async (req, res) => {
+    const { postId } = req.params;
+    const { userId } = req.body;
+  
+    try {
+      const post = await Post.findById(postId);
+  
+      // Check if the username is already in the likes array
+      if (post.likes.includes(userId)) {
+        return res.status(400).json({ message: "Already liked!" });
+      }
+  
+      // Add the username to the likes array
+      post.likes.push(userId);
+      await post.save();
+  
+      return res.status(200).json(post);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Error liking post" });
+    }
+  };
+  
+// Add a comment to a post
+const addComment = async (req, res) => {
+    const { postId } = req.params;
+    const { username, comment } = req.body;
 
-module.exports={createPost, updatePost, deletePost, getPostsByUser};
+    try {
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        // Add the new comment to the post
+        post.comments.push({ username, comment });
+        await post.save();
+        return res.status(200).json({ comments: post.comments });
+    } catch (error) {
+        console.error('Error adding comment:', error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+};
+
+module.exports={createPost, updatePost, deletePost, getPostsByUser,  likePost,
+  addComment};

@@ -1,5 +1,5 @@
 const express = require('express');
-const { createPost, updatePost, deletePost, getPostsByUser } = require('../controllers/postController');
+const { createPost, updatePost, deletePost, getPostsByUser, likePost, addComment } = require('../controllers/postController');
 const upload = require('../services/multer'); 
 
 const router = express.Router();
@@ -12,5 +12,8 @@ router.put('/update/:postId', upload.fields([{ name: 'images', maxCount: 5 }, { 
 
 
 router.delete('/delete/:postId', deletePost);
+router.post('/:postId/like', likePost);
 
+
+router.post('/:postId/comment', addComment);
 module.exports = router;
