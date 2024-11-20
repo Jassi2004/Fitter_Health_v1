@@ -42,6 +42,7 @@ exports.getUserCalories = async (req, res) => {
 
         // Return calories data
         return res.status(200).json({ success: true, data: caloriesData });
+
     } catch (error) {
         console.error('Error fetching user calories:', error);
         return res.status(500).json({ success: false, message: 'Internal server error.' });

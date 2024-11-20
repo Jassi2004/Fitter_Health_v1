@@ -27,7 +27,7 @@ const OTPPage = () => {
             
             console.log('OTP verification successful:', result);
             localStorage.setItem('token', result.data.token);
-            localStorage.setItem('userId', result.data.userId);
+            localStorage.setItem('userId', result.data.user._id);
            
             router.push('/dashboard');
 

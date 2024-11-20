@@ -29,7 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col h-screen`}
       >
-        <main className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-950  via-gray-950  text-white"> 
+        <main className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-1000  via-gray-1000  text-white"> 
           {children}
         </main>
         <Navbar />

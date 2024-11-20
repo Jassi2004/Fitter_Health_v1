@@ -34,7 +34,6 @@ app.use('/api/calories', caloriesRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/posts', postRoutes);
 
-app.use('/users', followerRoutes);
 
 connectDB();
 

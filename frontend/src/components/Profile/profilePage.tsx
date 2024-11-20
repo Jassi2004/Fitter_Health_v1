@@ -5,18 +5,25 @@ import { UserProfile } from '@/services/user/getUserProfile';
 import { GlowingStarsBackgroundCard } from '@/components/ui/glowing-stars';
 import { CanvasRevealEffect } from '@/components/ui/canvas-reveal-effect';
 import { Heart, MessageCircle } from 'lucide-react';
-import './profilePage.css'
+import './profilePage.css';
+import PostSection from '../post/PostSection';
+import { followUser} from '@/services/user/followUser'; 
+import { unfollowUser } from '@/services/user/unfollowUser'; 
 
-interface Post {
+export interface Post {
   _id: string;
+  title: string;
   author: string;
   content: string;
   images: string[];
-  videos: string[];
-  likes?: number;
-  comments?: number;
+  description: string;
+  src: string;
+  ctaText: string;
+  ctaLink: string;
+  count: number; // Assuming count refers to views, likes, etc.
+  comments: { username: string; comment: string }[];    
+  username: string; // Assuming username field exists in the post object 
 }
-
 interface ProfileTemplateProps {
   initialUser: UserProfile | null;
   loading: boolean;
@@ -25,7 +32,6 @@ interface ProfileTemplateProps {
 
 const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading, posts }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState<number>(initialUser?.followers.length || 0);
   const [currentUser, setCurrentUser] = useState<string | null>(null);
@@ -40,29 +46,15 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
       setUser(initialUser);
       setIsFollowing(initialUser.followers.some(follower => follower._id === storedUserId));
       setFollowerCount(initialUser.followers.length);
-
-      
     }
   }, [initialUser]);
 
   const handleFollow = async () => {
     if (!user || !currentUser) return;
     try {
-      const response = await fetch(`${API_BASE_URL}/api/users/follow`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          followerId: currentUser,
-          followingId: user._id,
-        }),
-      });
-
-      if (response.ok) {
-        setIsFollowing(true);
-        setFollowerCount(prev => prev + 1);
-      }
+      await followUser(currentUser, user._id);
+      setIsFollowing(true);
+      setFollowerCount(prev => prev + 1);
     } catch (error) {
       console.error('Failed to follow user:', error);
     }
@@ -71,25 +63,14 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
   const handleUnfollow = async () => {
     if (!user || !currentUser) return;
     try {
-      const response = await fetch(`${API_BASE_URL}/api/users/unfollow`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          followerId: currentUser,
-          followingId: user._id,
-        }),
-      });
-
-      if (response.ok) {
-        setIsFollowing(false);
-        setFollowerCount(prev => prev - 1);
-      }
+      await unfollowUser(currentUser, user._id);
+      setIsFollowing(false);
+      setFollowerCount(prev => prev - 1);
     } catch (error) {
       console.error('Failed to unfollow user:', error);
     }
   };
+
   const onMessageClick = async () => {
     if (!user || !currentUser) return;
     try {
@@ -99,6 +80,7 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
       console.error('Error in starting conversation:', error);
     }
   };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -112,9 +94,9 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
   }
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden profile-template bg-black">
+    <div className="relative w-full min-h-screen overflow-hidden profile-template bg-gray-1000">
       {/* Banner Section */}
-      <div className="relative flex flex-col items-center justify-center h-32 overflow-hidden z-10">
+      {/* <div className="relative flex flex-col items-center justify-center h-32 overflow-hidden z-10">
         <h1 className="text-3xl font-bold text-center text-white">{user.username}</h1>
         <CanvasRevealEffect
           animationSpeed={5}
@@ -125,7 +107,7 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
           ]}
           dotSize={3}
         />
-      </div>
+      </div> */}
 
       <GlowingStarsBackgroundCard className="absolute inset-0 z-0 overflow-hidden" />
 
@@ -138,7 +120,7 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
             <img
               src={`${API_BASE_URL}/${user.image}`}
               alt={user.username}
-              className="w-36 h-36 rounded-full border-2 border-gray-300 object-cover"
+              className="w-48 h-48 rounded-full border-2 border-gray-300 object-cover"
             />
             <p className="text-gray-200 mt-4 text-m">{user.username}</p>
           </div>
@@ -166,14 +148,7 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
             <div className="flex space-x-4 mt-4">
               {currentUser === user._id ? (
                 <>
-                  <button className="btn btn-primary"
-                  onClick={() => router.push('/settings')}>Settings</button>
-                  {/* <button
-                    className="btn"
-                    onClick={() => router.push('/settings/account')}
-                  >
-                    Edit Profile
-                  </button> */}
+                  <button className="btn btn-primary" onClick={() => router.push('/settings')}>Settings</button>
                   <button
                     className="btn btn-secondary"
                     onClick={() => router.push('/post/create-post')}
@@ -201,39 +176,11 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
 
         {/* Posts Section */}
         <div className="mt-6 p-4 w-full overflow-hidden">
-          <h2 className="text-2xl text-gray-300 m-2 font-semibold mb-3">Posts</h2>
+          <h2 className="text-2xl text-gray-300 m-2 font-semibold mb-3 w-full">Posts</h2>
           {isFollowing ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {posts.map((post) => (
-                <div
-                  className="card w-full bg-base-100 shadow-xl rounded-lg overflow-hidden border-2 border-gray-700"
-                  key={post._id}
-                >
-                  <div className="flex flex-col items-left bg-gray-800 p-4">
-                    <h3 className="text-white text-lg font-bold mb-2">{user.username}</h3>
-                    <figure className="relative w-full h-48">
-                      <img
-                        src={`${API_BASE_URL}${post.images[0]}` || 'default-image-url.jpg'}
-                        alt="Post"
-                        className="object-cover w-full h-full"
-                      />
-                    </figure>
-                  </div>
-                  <div className="card-body p-4 flex flex-col justify-between h-28">
-                    <p className="text-sm text-gray-500 line-clamp-3">{post.content || 'No content available.'}</p>
-                    <div className="flex justify-between mt-auto text-sm text-gray-400">
-                      <div className="flex items-center">
-                        <Heart size={16} />
-                        <span className="ml-2">{post.likes || 0}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <MessageCircle size={16} />
-                        <span className="ml-2">{post.comments || 0}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div className="w-full flex flex-wrap gap-6 justify-between">
+             <PostSection posts={posts} username={user.username} API_BASE_URL={process.env.NEXT_PUBLIC_API_BASE_URL || ''} />
+
             </div>
           ) : (
             <div className="text-center text-gray-400 mt-8">
@@ -241,7 +188,6 @@ const ProfileTemplate: React.FC<ProfileTemplateProps> = ({ initialUser, loading,
             </div>
           )}
         </div>
-
       </div>
     </div>
   );
