@@ -92,11 +92,19 @@ const UserSchema = mongoose.Schema(
     },
     caloriesHistory: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'CaloriesBurned',
+        date: {
+          type: Date,
+          required: true,
+          default: Date.now, // Default to the current date
+        },
+        calories: {
+          type: Number,
+          required: true, // Calories burned on that day
+        },
       },
     ],
-  }
+  },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model('User', UserSchema);

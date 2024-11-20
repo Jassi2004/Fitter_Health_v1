@@ -12,7 +12,7 @@ const router = express.Router();
 router.post('/', addCaloriesEntry);
 
 // Get calories for a specific user
-router.get('/user/:userId', getUserCalories);
+router.get('/:userId/getCaloriesBurnt', getUserCalories)
 
 // Fetch calories of followers
 router.get('/followers/:userId', getFollowersCalories);

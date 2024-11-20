@@ -10,6 +10,8 @@ const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
 const userRoutes = require('./routes/user');
 const postRoutes = require('./routes/posts');
+const followerRoutes = require("./routes/followerRoutes")
+const caloriesRoutes = require("./routes/caloriesRoutes")
 const PORT = process.env.PORT || 8080;
 const app = express();
 const server = http.createServer(app);
@@ -27,9 +29,12 @@ initSocket(server);
 app.use('/auth', authRoutes);
 app.use('/profile', profileRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/calories', caloriesRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/posts', postRoutes);
+
+app.use('/users', followerRoutes);
 
 connectDB();
 

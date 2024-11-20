@@ -1,55 +1,84 @@
 "use client";
 import { cn } from "@/lib/utils";
-import React from "react";
-import { BentoGrid, BentoGridItem } from "../ui/bento-grid";
+import React, { useEffect, useState } from "react";
+import { BentoGridItem } from "../ui/bento-grid";
 import {
-    IconBoxAlignRightFilled,
     IconClipboardCopy,
-    IconFileBroken,
-    IconSignature,
-    IconTableColumn,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Gauge, gaugeClasses, GaugeContainer, GaugeReferenceArc, GaugeValueArc } from '@mui/x-charts/Gauge';
-import { TextGenerateEffect } from "../ui/text-generate-effect";
+import { Gauge } from '@mui/x-charts/Gauge';
+import getLeaderboard from "@/services/dashboard/leaderboard";
+import { SparklesCore } from "../ui/sparkles";
+import getUserCalories from "@/services/dashboard/calories";
 
 
 export function DashboardBento() {
-    const pageHeading = "Dashboard"
+    const [currUserId, setCurrUserId] = useState<string | "">();
+
+    useEffect(() => {
+        const storedUserId = localStorage.getItem("userId");
+        console.log(storedUserId);
+
+        if (storedUserId) {
+            setCurrUserId(storedUserId);
+        } else {
+            console.error("No userId found in local storage");
+        }
+    }, []);
+
     return (
-
-
-
-
-
         <>
             <div className="flex w-full h-screen">
-
                 <div className="w-[24rem] h-full ml-2">
-                    <BentoGridItem
-                        key={1}
-                        title="Monthly Leader Board"
-                        description={(
-                            <span className="text-sm">
-                                Compete with your Friends
-                            </span>
-                        )}
-                        header={<SkeletonOneLeaderboard />}
-                        className={cn("[&>p:text-lg] w-96 h-full")}
-                        icon={<IconClipboardCopy className="h-4 w-4 text-neutral-500" />}
-                    />
+                    {currUserId ? (
+                        <BentoGridItem
+                            title="Monthly Leader Board"
+                            description={(
+                                <span className="text-sm">
+                                    Compete with your Friends
+                                </span>
+                            )}
+                            header={<SkeletonOneLeaderboard userId={currUserId} />}
+                            className={cn("[&>p:text-lg] w-96 h-full")}
+                            icon={<IconClipboardCopy className="h-4 w-4 text-neutral-500" />}
+                        />
+                    ) : (
+                        <p>Loading user data...</p>
+                    )}
                 </div>
 
-                <div className="absolute left-1/2 top-0 transform -translate-x-1/2 mt-4">
-                    <TextGenerateEffect className=" text-8xl font-extrabold" words={pageHeading} />
+
+                <div className="absolute left-1/2 top-0 transform -translate-x-1/2 -mt-36 h-[40rem] w-full flex flex-col items-center justify-center overflow-hidden rounded-md">
+                    <h1 className="md:text-7xl text-3xl lg:text-9xl font-bold text-center text-white relative -z-20">
+                        Aceternity
+                    </h1>
+                    <div className="w-[40rem] h-40 relative">
+                        {/* Gradients */}
+                        <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-[2px] w-3/4 blur-sm" />
+                        <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-px w-3/4" />
+                        <div className="absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-[5px] w-1/4 blur-sm" />
+                        <div className="absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px w-1/4" />
+
+                        {/* Core component */}
+                        <SparklesCore
+                            background="transparent"
+                            minSize={0.4}
+                            maxSize={1}
+                            particleDensity={1200}
+                            className="w-full h-[2rem]"
+                            particleColor="#FFFFFF"
+                        />
+
+                        {/* Radial Gradient to prevent sharp edges */}
+                        <div className="absolute inset-0 w-full h-full [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
+                    </div>
                 </div>
 
 
                 <div className="w-auto min-h-[30rem] h-auto flex mx-2 my-60">
 
                     <BentoGridItem
-                        key={1}
                         title="Workout Stats for Nerds"
                         description={(
                             <span className="text-sm">
@@ -62,11 +91,10 @@ export function DashboardBento() {
                     />
 
                     <BentoGridItem
-                        key={1}
                         title="Achivements"
                         description={(
                             <span className="text-sm">
-                                Your Achivements Matter
+                                Your Amazing
                             </span>
                         )}
                         header={<SkeletonFour />}
@@ -77,7 +105,6 @@ export function DashboardBento() {
 
                 <div className="w-[25rem] h-full">
                     <BentoGridItem
-                        key={1}
                         title="Current Weight"
                         description={(
                             <span className="text-sm">
@@ -90,7 +117,6 @@ export function DashboardBento() {
                     />
 
                     <BentoGridItem
-                        key={1}
                         title="Workout Logs"
                         description={(
                             <span className="text-sm">
@@ -102,70 +128,111 @@ export function DashboardBento() {
                         icon={<IconClipboardCopy className="h-4 w-4 text-neutral-500" />}
                     />
                 </div>
-
-
-
-                {/* <div className="flex my-36 ">
-
-                    <BentoGridItem
-                        key={1}
-                        title="Workout Stats for Nerds"
-                        description={(
-                            <span className="text-sm">
-                                Hover To See Your Stats.
-                            </span>
-                        )}
-                        header={<SkeletonTwo />}
-                        className={cn("[&>p:text-lg] h-[30rem] w-1/5 mx-10")}
-                        icon={<IconClipboardCopy className="h-4 w-4 text-neutral-500" />}
-                    />
-
-                    <BentoGridItem
-                        key={1}
-                        title="Achivements"
-                        description={(
-                            <span className="text-sm">
-                                Your Achivements Matter
-                            </span>
-                        )}
-                        header={<SkeletonFour />}
-                        className={cn("[&>p:text-lg] h-[30rem] w-1/5 mx-10")}
-                        icon={<IconClipboardCopy className="h-4 w-4 text-neutral-500" />}
-                    />
-                </div>
-
-                <BentoGridItem
-                    key={1}
-                    title="Past Workout Record"
-                    description={(
-                        <span className="text-sm">
-                            All Your Past Workouts
-                        </span>
-                    )}
-                    header={<SkeletonOne />}
-                    className={cn("[&>p:text-lg] w-1/3 h-full")}
-                    icon={<IconClipboardCopy className="h-4 w-4 text-neutral-500" />}
-                /> */}
-
-
             </div>
-
-
-            {/* <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[20rem]">
-                {items.map((item, i) => (
-                    <BentoGridItem
-                        key={i}
-                        title={item.title}
-                        description={item.description}
-                        header={item.header}
-                        className={cn("[&>p:text-lg]", item.className)}
-                        icon={item.icon}
-                    />
-                ))}
-            </BentoGrid> */}
         </>
     );
 }
+
+const SkeletonOneLeaderboard = ({ userId }: { userId: string }) => {
+    const [leaderboardData, setLeaderboardData] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // Fetch leaderboard data
+    useEffect(() => {
+        const fetchLeaderboard = async () => {
+            try {
+                setLoading(true);
+                const response = await getLeaderboard(userId);
+                setLeaderboardData(response.leaderboard); // Use the API response structure
+                setError(null);
+            } catch (err: any) {
+                console.error("Error fetching leaderboard:", err.message);
+                setError("Failed to load leaderboard data.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchLeaderboard();
+    }, [userId]);
+
+    // Animation Variants
+    const variants = {
+        initial: { x: 0 },
+        animate: { x: 10, rotate: 1.5, transition: { duration: 0.2 } },
+    };
+    const variantsSecond = {
+        initial: { x: 0 },
+        animate: { x: -10, rotate: -1.5, transition: { duration: 0.2 } },
+    };
+
+    const getCircleStyle = (rank: number) => {
+        switch (rank) {
+            case 1:
+                return "bg-yellow-400 text-black border-yellow-500"; // Gold
+            case 2:
+                return "bg-gray-400 text-black border-gray-500"; // Silver
+            case 3:
+                return "bg-amber-700 text-white border-amber-800"; // Bronze
+            default:
+                return "bg-[#1976D2] text-white border-neutral-900"; // Default
+        }
+    };
+
+    // Render
+    if (loading) {
+        return <p>Loading leaderboard...</p>;
+    }
+
+    if (error) {
+        return <p>{error}</p>;
+    }
+
+    return (
+        <>
+            <div className="flex justify-center">
+                <button className=" font-extrabold inline-flex h-12 w-36 animate-shimmer items-center justify-center rounded-md border border-yellow-500 bg-[linear-gradient(110deg,#f9d423,45%,#ffbc00,55%,#f9d423)] bg-[length:200%_100%] px-2 text-black transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-yellow-100">
+                    Leaderboard
+                </button>
+            </div>
+            <motion.div
+                initial="initial"
+                whileHover="animate"
+                className=" pt-5 flex flex-1 w-full min-h-[12rem] dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex-col space-y-4 overflow-y-auto custom-scrollbar"
+            >
+                {/* Map through sorted data and apply alternating animation */}
+                {leaderboardData.map((item, index) => {
+                    const rank = index + 1; // Determine rank based on index
+                    return (
+                        <motion.div
+                            key={item.followerId}
+                            variants={index % 2 === 0 ? variants : variantsSecond}
+                            className="flex flex-row rounded-full border border-neutral-100 dark:border-white/[0.2] p-1 items-center space-x-4 bg-white dark:bg-black"
+                        >
+                            <div
+                                className={`h-10 w-10 flex items-center justify-center rounded-full border-2 ${getCircleStyle(
+                                    rank
+                                )}`}
+                            >
+                                {rank <= 3 ? rank : ""}
+                            </div>
+                            <div className="flex flex-1 flex-col">
+                                <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                    {item.username}
+                                </span>
+                                <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                                    Burned {item.totalCalories} calories
+                                </span>
+                            </div>
+                        </motion.div>
+                    );
+                })}
+            </motion.div>
+        </>
+    );
+};
+
 
 const getRandomColor = () => {
     const gradients = [
@@ -276,129 +343,46 @@ const SkeletonOne = () => {
 };
 
 
-const SkeletonOneLeaderboard = () => {
-    // Mixed-up Demo Data Array
-    const demoData = [
-        { id: 1, name: "Alice", caloriesBurned: 300, date: "11/18/2024" },
-        { id: 2, name: "Bob", caloriesBurned: 100, date: "11/18/2024" },
-        { id: 3, name: "Charlie", caloriesBurned: 500, date: "11/18/2024" },
-        { id: 4, name: "Diana", caloriesBurned: 200, date: "11/18/2024" },
-        { id: 5, name: "Ethan", caloriesBurned: 400, date: "11/18/2024" },
-        { id: 6, name: "Alice", caloriesBurned: 320, date: "11/18/2024" },
-        { id: 7, name: "Bob", caloriesBurned: 105, date: "11/18/2024" },
-        { id: 8, name: "Charlie", caloriesBurned: 5000, date: "11/18/2024" },
-        { id: 9, name: "Diana", caloriesBurned: 200, date: "11/18/2024" },
-        { id: 10, name: "Ethan", caloriesBurned: 400, date: "11/18/2024" },
-    ];
-
-    // Sort the demo data by ascending caloriesBurned before rendering
-    const sortedData = [...demoData].sort((a, b) => a.caloriesBurned - b.caloriesBurned);
-
-    // Animation Variants
-    const variants = {
-        initial: { x: 0 },
-        animate: { x: 10, rotate: 1.5, transition: { duration: 0.2 } },
-    };
-    const variantsSecond = {
-        initial: { x: 0 },
-        animate: { x: -10, rotate: -1.5, transition: { duration: 0.2 } },
-    };
-
-    const getCircleStyle = (rank) => {
-        switch (rank) {
-            case 1:
-                return "bg-yellow-400 text-black border-yellow-500"; // Gold
-            case 2:
-                return "bg-gray-400 text-black border-gray-500"; // Silver
-            case 3:
-                return "bg-amber-700 text-white border-amber-800"; // Bronze
-            default:
-                return "bg-[#1976D2] text-white border-neutral-900"; // Default
-        }
-    };
-
-    // Render Leaderboard
-    return (
-        <>
-            <div className="flex justify-center">
-                <button className="inline-flex h-12 w-36 animate-shimmer items-center justify-center rounded-md border border-yellow-500 bg-[linear-gradient(110deg,#f9d423,45%,#ffbc00,55%,#f9d423)] bg-[length:200%_100%] px-6 font-medium text-black transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-yellow-100">
-                    Leaderboard
-                </button>
-            </div>
-            <motion.div
-                initial="initial"
-                whileHover="animate"
-                className="flex flex-1 w-full min-h-[12rem] dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex-col space-y-4 overflow-y-auto custom-scrollbar"
-            >
-                {/* Map through sorted data and apply alternating animation */}
-                {sortedData.map((item, index) => {
-                    const rank = index + 1; // Determine rank based on index
-                    return (
-                        <motion.div
-                            key={item.id}
-                            variants={index % 2 === 0 ? variants : variantsSecond}
-                            className="flex flex-row rounded-full border border-neutral-100 dark:border-white/[0.2] p-4 items-center space-x-4 bg-white dark:bg-black"
-                        >
-                            <div
-                                className={`h-10 w-10 flex items-center justify-center rounded-full border-2 ${getCircleStyle(
-                                    rank
-                                )}`}
-                            >
-                                {rank <= 3 ? rank : ""}
-                            </div>
-                            <div className="flex flex-1 flex-col">
-                                <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                                    {item.name}
-                                </span>
-                                <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                                    Burned {item.caloriesBurned} calories
-                                </span>
-                            </div>
-                        </motion.div>
-                    );
-                })}
-            </motion.div>
-        </>
-    );
-};
 
 const SkeletonTwo = () => {
-    const workoutStats = [
-        { id: 1, exercise: "Squats", duration: 45, calories: 250, date: "11/11/2024" },  // 45 minutes, 250 calories
-        { id: 2, exercise: "Push-ups", duration: 30, calories: 150, date: "12/11/2024" }, // 30 minutes, 150 calories
-        { id: 3, exercise: "Running", duration: 60, calories: 500, date: "11/15/2024" }, // 60 minutes, 500 calories
-        { id: 4, exercise: "Cycling", duration: 40, calories: 350, date: "11/16/2024" }, // 40 minutes, 350 calories
-        { id: 5, exercise: "Yoga", duration: 50, calories: 200, date: "11/17/2024" },   // 50 minutes, 200 calories
-        { id: 6, exercise: "HIIT", duration: 25, calories: 300, date: "1/18/2024" },    // 25 minutes, 300 calories
-    ];
+    const [workoutStats, setWorkoutStats] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     const variants = {
-        initial: {
-            width: 0,
-        },
-        animate: {
-            width: "100%",
-            transition: {
-                duration: 0.2,
-            },
-        },
-        hover: {
-            width: ["0%", "100%"],
-            transition: {
-                duration: 2,
-            },
-        },
+        initial: { width: 0 },
+        animate: { width: "100%", transition: { duration: 0.2 } },
+        hover: { width: ["0%", "100%"], transition: { duration: 2 } },
     };
 
     // Format the date to display only day and month (e.g., 11/11)
-    const formatDate = (dateString: string) => {
+    const formatDate = (dateString: any) => {
         const date = new Date(dateString);
-        const options: Intl.DateTimeFormatOptions = {
-            day: '2-digit',
-            month: '2-digit',
-        };
-        return date.toLocaleDateString('en-GB', options);  // returns in "dd/mm" format
+        const options = { day: "2-digit", month: "2-digit" };
+        return date.toLocaleDateString("en-GB", options); // Returns in "dd/mm" format
     };
+
+    useEffect(() => {
+        const fetchCalories = async () => {
+            try {
+                const userId = localStorage.getItem("userId");
+                if (!userId) {
+                    throw new Error("userId not found. Please log in again.");
+                }
+
+                const data = await getUserCalories(userId);
+
+                setWorkoutStats(data.data || []); // Assuming API returns { data: [...] }
+            } catch (err) {
+                console.error("Failed to fetch workout stats:", err);
+                setError(err.message || "An unexpected error occurred.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCalories();
+    }, []);
 
     return (
         <motion.div
@@ -408,39 +392,44 @@ const SkeletonTwo = () => {
             className="flex flex-1 w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex-col space-y-2 p-4"
         >
             <div className="flex justify-center mb-7">
-                <button className="inline-flex h-12 w-36 animate-shimmer items-center justify-center rounded-md border border-yellow-500 bg-[linear-gradient(110deg,#f9d423,45%,#ffbc00,55%,#f9d423)] bg-[length:200%_100%] px-6 font-medium text-black transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-yellow-100">
+                <button className="inline-flex font-extrabold h-12 w-auto animate-shimmer items-center justify-center rounded-md border border-yellow-500 bg-[linear-gradient(110deg,#f9d423,45%,#ffbc00,55%,#f9d423)] bg-[length:200%_100%] px-3 text-black transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-yellow-100">
                     Calories Burnt
                 </button>
             </div>
 
-            {workoutStats.map((item, i) => (
-                <div key={item.id} className="flex items-center space-x-4 w-full">
-                    {/* Display Date in the same line */}
-                    <div className="flex-shrink-0 text-sm text-gray-500 dark:text-gray-300">
-                        {formatDate(item.date)}
-                    </div>
-
-                    {/* Motion Div for Skeleton Animation */}
-                    <motion.div
-                        key={"skelenton-two" + i}
-                        variants={variants}
-                        style={{
-                            maxWidth: item.calories / 8 + "%",  // Set width based on calories
-                        }}
-                        className="flex flex-row rounded-full border border-neutral-100 dark:border-white/[0.6] p-4 items-center space-x-2 bg-neutral-100 dark:bg-black w-full h-4 text-sm"
-                    >
-                        <div className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-                            {item.calories}
+            {loading ? (
+                <div className="text-center text-gray-500">Loading...</div>
+            ) : error ? (
+                <div className="text-center text-red-500">{error}</div>
+            ) : workoutStats.length > 0 ? (
+                workoutStats.map((item, i) => (
+                    <div key={item._id} className="flex items-center space-x-4 w-full">
+                        {/* Display Date in the same line */}
+                        <div className="flex-shrink-0 text-sm text-gray-500 dark:text-gray-300">
+                            {formatDate(item.date)}
                         </div>
-                    </motion.div>
-                </div>
-            ))}
+
+                        {/* Motion Div for Skeleton Animation */}
+                        <motion.div
+                            key={"skeleton-two" + i}
+                            variants={variants}
+                            style={{
+                                maxWidth: item.calories / 8 + "%",
+                            }}
+                            className="flex flex-row rounded-full border border-neutral-100 dark:border-white/[0.6] p-4 items-center space-x-2 bg-neutral-100 dark:bg-black w-full h-4 text-sm"
+                        >
+                            <div className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                {item.calories}
+                            </div>
+                        </motion.div>
+                    </div>
+                ))
+            ) : (
+                <div className="text-center text-gray-500">No workout data available.</div>
+            )}
         </motion.div>
     );
 };
-
-
-
 
 
 
@@ -525,7 +514,7 @@ const SkeletonFour = () => {
         >
             <div className="flex flex-col">
 
-                <div className="flex my-5">
+                <div className="flex my-5 space-x-8 pl-4">
 
                     <motion.div
                         variants={first}
@@ -536,7 +525,7 @@ const SkeletonFour = () => {
                             alt="avatar"
                             height="200"
                             width="200"
-                            className="rounded-full h-36 w-36"
+                            className="rounded-full h-24 w-24"
                         />
                         <p className="border border-red-500 bg-red-100 dark:bg-red-900/20 text-red-600 text-xs rounded-full px-2 py-0.5 mt-4">
                             Athelete
@@ -560,7 +549,7 @@ const SkeletonFour = () => {
                 </div>
 
 
-                <div className="flex">
+                <div className="flex space-x-8 pl-4">
 
                     <motion.div
                         variants={first}

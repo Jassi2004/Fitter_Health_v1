@@ -14,7 +14,9 @@ const { log } = require('console');
 
 // Generate OTP
 const generateOTP = () => {
-    return crypto.randomInt(100000, 999999).toString();
+    let otp = crypto.randomInt(100000, 999999).toString();
+    console.log(otp);
+    return otp;
 };
 
 // Store OTP in Redis with expiration

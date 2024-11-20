@@ -25,14 +25,29 @@ exports.addCaloriesEntry = async (req, res) => {
 exports.getUserCalories = async (req, res) => {
     const { userId } = req.params;
 
+    // Validate that userId is provided and is a valid ObjectId
+    if (!userId) {
+        return res.status(400).json({ success: false, message: 'User ID is required.' });
+    }
+
     try {
+        // Check if the user exists
+        const userExists = await User.findById(userId);
+        if (!userExists) {
+            return res.status(404).json({ success: false, message: 'User not found.' });
+        }
+
+        // Fetch calories data for the user
         const caloriesData = await CaloriesBurned.find({ user: userId }).sort({ date: -1 });
-        res.status(200).json({ success: true, data: caloriesData });
+
+        // Return calories data
+        return res.status(200).json({ success: true, data: caloriesData });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        console.error('Error fetching user calories:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error.' });
     }
 };
+
 
 // Fetch calories of followers
 exports.getFollowersCalories = async (req, res) => {
